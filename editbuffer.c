@@ -10,3 +10,5 @@ EditBuffer *buf_new(void)
     b->conf = malloc(sizeof(Config));
     return b;
 }
+
+

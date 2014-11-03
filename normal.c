@@ -3,6 +3,7 @@
 #include "state.h"
 #include "insert.h"
 #include "quit.h"
+#include "gapbuffer.h"
 
 #define KEY_MOVE_LEFT  'h'
 #define KEY_MOVE_RIGHT 'l'
@@ -20,7 +21,6 @@ void normalHandler(int c)
     case KEY_MOVE_RIGHT:
         b_cursorRight(g_cb->b);
         g_cb->highCol = gb_getPosition(g_cb->b->line->content);
-        ++g_cb->highCol;
         break;
     case KEY_MOVE_LEFT:
         b_cursorLeft(g_cb->b);
@@ -45,5 +45,14 @@ void normalHandler(int c)
         b_cursorRight(g_cb->b);
         g_handleInput = insertHandler;
         break;
+    }
+    /* If we are still in NORMAL mode, and the cursor is positioned after the last character on the
+     * line, move the cursor to the left 1 character
+     */
+    if (g_mode == NORMAL) {
+        if (gb_getPosition(g_cb->b->line->content) >= gb_length(g_cb->b->line->content)) {
+            b_cursorLeft(g_cb->b);
+            g_cb->highCol = MAX(gb_getPosition(g_cb->b->line->content), g_cb->highCol - 1);
+        }
     }
 }

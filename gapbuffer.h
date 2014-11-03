@@ -1,47 +1,51 @@
 #ifndef __GAPBUFFER_H__
 #define __GAPBUFFER_H__
-    #include <stdlib.h>
 
-    typedef struct {
-        char *fst;
-        char *snd;
-        size_t fsz;
-        size_t ssz;
-    } GapBuffer;
+#include <stdlib.h>
 
-    GapBuffer *gb_new(void);
+#define MIN(a,b) (((a) > (b)) ? (b) : (a))
+#define MAX(a,b) (((a) > (b)) ? (a) : (b))
 
-    GapBuffer *gb_fromCString(char *s, size_t n);
+typedef struct {
+    char *fst;
+    char *snd;
+    size_t fsz;
+    size_t ssz;
+} GapBuffer;
 
-    void gb_position(GapBuffer *gb, int p);
+GapBuffer *gb_new(void);
 
-    int gb_forcePosition(GapBuffer*, int p);
+GapBuffer *gb_fromCString(char *s, size_t n);
 
-    int gb_getPosition(GapBuffer *gb);
+void gb_position(GapBuffer *gb, int p);
 
-    void gb_insertChar(GapBuffer *gb, char c);
+int gb_forcePosition(GapBuffer*, int p);
 
-    void gb_insertString(GapBuffer *gb, char *s);
+int gb_getPosition(GapBuffer *gb);
 
-    char *gb_substring(GapBuffer *gb, int begin, int end);
+void gb_insertChar(GapBuffer *gb, char c);
 
-    size_t gb_length(GapBuffer *gb);
+void gb_insertString(GapBuffer *gb, char *s);
 
-    char *gb_cString(GapBuffer *gb);
+char *gb_substring(GapBuffer *gb, int begin, int end);
 
-    void gb_delete(GapBuffer *gb, size_t);
+size_t gb_length(GapBuffer *gb);
 
-    void gb_goToEnd(GapBuffer *gb);
+char *gb_cString(GapBuffer *gb);
 
-    void gb_goToStart(GapBuffer *gb);
+void gb_delete(GapBuffer *gb, size_t);
 
-    void gb_cursesPrint(GapBuffer *gb);
+void gb_goToEnd(GapBuffer *gb);
 
-    void gb_free(GapBuffer *gb);
+void gb_goToStart(GapBuffer *gb);
 
-    void gb_moveLeft(GapBuffer*, int n);
+void gb_cursesPrint(GapBuffer *gb);
 
-    void gb_moveRight(GapBuffer*, int n);
+void gb_free(GapBuffer *gb);
+
+void gb_moveLeft(GapBuffer*, int n);
+
+void gb_moveRight(GapBuffer*, int n);
 
 
 #endif
