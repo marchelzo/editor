@@ -29,12 +29,14 @@
 
     void gb_goToEnd(GapBuffer *gb);
 
+    void gb_goToStart(GapBuffer *gb);
+
     void gb_cursesPrint(GapBuffer *gb);
 
     void gb_free(GapBuffer *gb);
 
-    void gb_moveLeft(int n);
+    void gb_moveLeft(GapBuffer*, int n);
 
-    void gb_moveRight(int n);
+    void gb_moveRight(GapBuffer*, int n);
 
 #endif

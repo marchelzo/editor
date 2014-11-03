@@ -13,6 +13,6 @@ extern EditorMode g_mode;
 extern Buffer *g_cb;
 
 /* global input handler */
-extern void (*handleInput)(int);
+extern void (*g_handleInput)(int);
 
 #endif

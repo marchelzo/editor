@@ -5,6 +5,7 @@
 #include "gapbuffer.h"
 
 #define MIN(a,b) (((a) > (b)) ? (b) : (a))
+#define MAX(a,b) (((a) > (b)) ? (a) : (b))
 
 GapBuffer *gb_new(void)
 {
@@ -103,7 +104,7 @@ void gb_cursesPrint(GapBuffer *b)
 {
     for (int i = 0; i < b->fsz; ++i)
         addch(b->fst[i]);
-    for (int i = 0; i < b->ssz; ++i)
+    for (int i = b->ssz - 1; i >= 0; --i)
         addch(b->snd[i]);
 }
 
@@ -112,9 +113,24 @@ void gb_goToEnd(GapBuffer *b)
     gb_position(b, gb_length(b));
 }
 
+void gb_goToStart(GapBuffer *b)
+{
+    gb_position(b, 0);
+}
+
 void gb_free(GapBuffer *gb)
 {
     free(gb->fst);
     free(gb->snd);
     free(gb);
+}
+
+void gb_moveLeft(GapBuffer *b, int n)
+{
+    gb_position(b, MAX(0, (int)b->fsz - n));
+}
+
+void gb_moveRight(GapBuffer *b, int n)
+{
+    gb_position(b, MIN(b->fsz + b->ssz, b->fsz + n));
 }

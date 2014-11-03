@@ -10,7 +10,7 @@
 /* globals */
 EditorMode g_mode;
 Buffer *g_cb;
-void (*handleInput)(int);
+void (*g_handleInput)(int);
 
 int main(int argc, char *argv[])
 {
@@ -22,16 +22,15 @@ int main(int argc, char *argv[])
 
     g_cb = b_new();
     g_mode = INSERT;
-    handleInput = insertHandler;
+    g_handleInput = insertHandler;
 
     int c;
     while (1) {
         c = getch();
-        handleInput(c);
+        g_handleInput(c);
         clear();
         b_cursesPrint(g_cb, 0, 0);
-        if (g_mode == NORMAL)
-            handleInput = normalHandler;
+        b_cursesPositionCursor(g_cb, 0, 0);
     }
     return 0;
 }

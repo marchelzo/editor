@@ -5,6 +5,17 @@
 #include "buffer.h"
 #include "gapbuffer.h"
 
+static void reverseBytes(void *start, int size) {
+    unsigned char *lo = start;
+    unsigned char *hi = start + size - 1;
+    unsigned char swap;
+    while (lo < hi) {
+        swap = *lo;
+        *lo++ = *hi;
+        *hi-- = swap;
+    }
+}
+
 Buffer *b_new()
 {
     Buffer *b = malloc(sizeof(Buffer));
@@ -25,10 +36,15 @@ void b_insertLine(Buffer *b)
     n->content = gb_new();
     n->content->fst = b->line->content->snd;
     n->content->fsz = b->line->content->ssz;
+    /* reverse the bytes in the new line, to account for snd being backwards */
+    //reverseBytes(n->content->fst, n->content->fsz);
+    gb_goToStart(n->content);
     b->line->content->ssz = 0;
     b->line->content->snd = malloc(1);
     b->line = n;
     gb_position(n->content, n->content->fsz);
+    ++b->numLines;
+    ++b->currentLine;
 }
 
 void b_insertChar(Buffer *b, char c)
@@ -44,12 +60,10 @@ void b_cursesPrint(Buffer *b, int x, int y)
     LineNode *c = b->line;
     while (b->line->prev != NULL)
         b->line = b->line->prev;
-    int i = 0;
-    while (b->line != NULL) {
+    for (int i = 0; i < b->numLines; ++i) {
         move(y + i, x);
         gb_cursesPrint(b->line->content);
         b->line = b->line->next;
-        ++i;
     }
     b->line = c;
 }
@@ -68,12 +82,47 @@ void b_joinLine(Buffer *b)
     if (b->line->prev == NULL)
         return;
     gb_goToEnd(b->line->prev->content);
-    b->line->prev->content->fst = realloc(b->line->prev->content->fst,
-                                          b->line->prev->content->fsz + b->line->content->ssz);
-    memcpy(b->line->prev->content->fst + b->line->prev->content->fsz, b->line->content->snd, b->line->content->ssz);
+    b->line->prev->content->snd = b->line->content->snd;
     b->line->prev->next = b->line->next;
-    b->line->prev->content->fsz += b->line->content->ssz;
+    if (b->line->next != NULL)
+        b->line->next->prev = b->line->prev;
+    b->line->prev->content->ssz = b->line->content->ssz;
     GapBuffer *temp = b->line->content;
     b->line = b->line->prev;
-    gb_free(temp);
+    free(temp);
+    --b->numLines;
+    --b->currentLine;
+}
+
+void b_cursorRight(Buffer *b)
+{
+    gb_moveRight(b->line->content, 1);
+}
+
+void b_cursorLeft(Buffer *b)
+{
+    gb_moveLeft(b->line->content, 1);
+}
+
+void b_cursorUp(Buffer *b)
+{
+    // TODO: refactor - add scroll(int) function instead of hard coding bounds checking here
+    if (b->line->prev == NULL)
+        return;
+    b->line = b->line->prev;
+    --b->currentLine;
+}
+
+void b_cursorDown(Buffer *b)
+{
+    // TODO: refactor - add scroll(int) function instead of hard coding bounds checking here
+    if (b->line->next == NULL)
+        return;
+    b->line = b->line->next;
+    ++b->currentLine;
+}
+
+void b_cursesPositionCursor(Buffer *b, int xOff, int yOff)
+{
+    move(b->currentLine + yOff, gb_getPosition(b->line->content) + xOff);
 }

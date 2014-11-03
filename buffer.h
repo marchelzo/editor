@@ -20,6 +20,12 @@
     void b_insertChar(Buffer *b, char c);
     void b_backspace(Buffer *b);
     void b_joinLine(Buffer *b);
-    void b_cursesPrint(Buffer *b, int x, int y);
+    void b_cursesPrint(Buffer *b, int xOff, int yOff);
+    void b_cursesPositionCursor(Buffer *b, int xOff, int yOff);
+    void b_cursorRight(Buffer *b);
+    void b_cursorLeft(Buffer *b);
+    void b_cursorUp(Buffer *b);
+    void b_cursorDown(Buffer *b);
+
 
 #endif
