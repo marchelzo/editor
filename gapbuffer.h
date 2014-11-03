@@ -25,7 +25,7 @@ int gb_getPosition(GapBuffer *gb);
 
 void gb_insertChar(GapBuffer *gb, char c);
 
-void gb_insertString(GapBuffer *gb, char *s);
+void gb_insertString(GapBuffer *gb, const char *s);
 
 char *gb_substring(GapBuffer *gb, int begin, int end);
 

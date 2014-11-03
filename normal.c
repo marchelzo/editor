@@ -28,31 +28,30 @@ void normalHandler(int c)
         break;
     case KEY_MOVE_UP:
         b_cursorUp(g_cb->b);
-        gb_forcePosition(g_cb->b->line->content, g_cb->highCol);
+        if (g_cb->highCol >= gb_length(g_cb->b->line->content))
+            buf_moveToLastCharOnCurrentLine(g_cb);
+        else
+            gb_position(g_cb->b->line->content, g_cb->highCol);
         g_cb->visCol = gb_getPosition(g_cb->b->line->content);
         break;
     case KEY_MOVE_DOWN:
         b_cursorDown(g_cb->b);
-        gb_forcePosition(g_cb->b->line->content, g_cb->highCol);
+        if (g_cb->highCol >= gb_length(g_cb->b->line->content))
+            buf_moveToLastCharOnCurrentLine(g_cb);
+        else
+            gb_position(g_cb->b->line->content, g_cb->highCol);
         g_cb->visCol = gb_getPosition(g_cb->b->line->content);
         break;
     case KEY_INSERT:
-        g_mode = INSERT;
-        g_handleInput = insertHandler;
+        g_cb->mode = INSERT;
+        g_cb->handleInput = insertHandler;
         break;
     case KEY_APPEND:
-        g_mode = INSERT;
+        g_cb->mode = INSERT;
         b_cursorRight(g_cb->b);
-        g_handleInput = insertHandler;
+        g_cb->handleInput = insertHandler;
         break;
     }
-    /* If we are still in NORMAL mode, and the cursor is positioned after the last character on the
-     * line, move the cursor to the left 1 character
-     */
-    if (g_mode == NORMAL) {
-        if (gb_getPosition(g_cb->b->line->content) >= gb_length(g_cb->b->line->content)) {
-            b_cursorLeft(g_cb->b);
-            g_cb->highCol = MAX(gb_getPosition(g_cb->b->line->content), g_cb->highCol - 1);
-        }
-    }
+    if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))
+        buf_moveToLastCharOnCurrentLine(g_cb);
 }

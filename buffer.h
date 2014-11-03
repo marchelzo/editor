@@ -20,6 +20,7 @@
 
     void b_insertLine(Buffer *b);
     void b_insertChar(Buffer *b, char c);
+    void b_insertString(Buffer *b, const char *s);
     void b_backspace(Buffer *b);
     void b_joinLine(Buffer *b);
     void b_cursesPrint(Buffer *b, int xOff, int yOff);

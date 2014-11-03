@@ -81,6 +81,11 @@ void b_insertChar(Buffer *b, char c)
         gb_insertChar(b->line->content, c);
 }
 
+void b_insertString(Buffer *b, const char *s)
+{
+    gb_insertString(b->line->content, s);
+}
+
 void b_cursesPrint(Buffer *b, int x, int y)
 {
     LineNode *c = b->line;

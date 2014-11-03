@@ -66,7 +66,7 @@ void gb_insertChar(GapBuffer *gb, char c)
     ++gb->fsz;
 }
 
-void gb_insertString(GapBuffer *gb, char *s)
+void gb_insertString(GapBuffer *gb, const char *s)
 {
     size_t len = strlen(s);
     gb->fst = realloc(gb->fst, gb->fsz + len);
