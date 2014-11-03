@@ -31,11 +31,7 @@ int main(int argc, char *argv[])
         g_handleInput(c);
         clear();
         b_cursesPrint(g_cb, 0, 0);
-
-        mvprintw(20,20,"Current line: %d   pos: %d    num lines: %d", g_cb->currentLine, gb_getPosition(g_cb->line->content), g_cb->numLines);
-
         b_cursesPositionCursor(g_cb, 0, 0);
-
         refresh();
     }
     return 0;

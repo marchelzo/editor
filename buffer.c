@@ -6,6 +6,7 @@
 #include "gapbuffer.h"
 
 static void reverseBytes(void *start, int size) {
+    if (size == 0) return;
     unsigned char *lo = start;
     unsigned char *hi = start + size - 1;
     unsigned char swap;
