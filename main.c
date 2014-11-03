@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <curses.h>
 
@@ -6,10 +7,11 @@
 #include "mode.h"
 #include "insert.h"
 #include "normal.h"
+#include "editbuffer.h"
 
 /* globals */
 EditorMode g_mode;
-Buffer *g_cb;
+EditBuffer *g_cb;
 void (*g_handleInput)(int);
 char *g_msg;
 
@@ -21,7 +23,9 @@ int main(int argc, char *argv[])
     nonl();
     noecho();
 
-    g_cb = b_new();
+    FILE *f = fopen(argv[1], "r");
+    g_cb = malloc(sizeof(EditBuffer));
+    g_cb->b = b_fromFile(f);
     g_mode = INSERT;
     g_handleInput = insertHandler;
 
@@ -30,8 +34,8 @@ int main(int argc, char *argv[])
         c = getch();
         g_handleInput(c);
         clear();
-        b_cursesPrint(g_cb, 0, 0);
-        b_cursesPositionCursor(g_cb, 0, 0);
+        b_cursesPrint(g_cb->b, 0, 0);
+        b_cursesPositionCursor(g_cb->b, 0, 0);
         refresh();
     }
     return 0;

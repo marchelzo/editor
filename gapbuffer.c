@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <stdlib.h>
 #include <string.h>
 #include <curses.h>
@@ -14,6 +16,13 @@ GapBuffer *gb_new(void)
     gb->snd = malloc(1);
     gb->fsz = 0;
     gb->ssz = 0;
+}
+
+GapBuffer *gb_fromCString(char *s, size_t n)
+{
+    GapBuffer *b = gb_new();
+    b->ssz = (size_t) n;
+    b->snd = s;
 }
 
 void gb_position(GapBuffer *gb, int p)
@@ -38,6 +47,16 @@ void gb_position(GapBuffer *gb, int p)
         }
     }
 
+}
+
+int gb_forcePosition(GapBuffer *gb, int p)
+{
+    if (p < 0)
+        p = 0;
+    if (p > gb->ssz + gb->fsz)
+        p = gb->ssz + gb->fsz;
+    gb_position(gb, p);
+    return p;
 }
 
 int gb_getPosition(GapBuffer *gb)

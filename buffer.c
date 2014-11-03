@@ -1,9 +1,12 @@
+#define _GNU_SOURCE
+
 #include <stdlib.h>
 #include <string.h>
 #include <curses.h>
 
 #include "buffer.h"
 #include "gapbuffer.h"
+#include "loadfile.h"
 
 static void reverseBytes(void *start, int size) {
     if (size == 0) return;
@@ -26,6 +29,26 @@ Buffer *b_new()
     b->line->next = NULL;
     b->numLines = 1;
     b->currentLine = 0;
+}
+
+Buffer *b_fromFile(FILE *fp)
+{
+    Buffer *b = b_new();
+    LoadedFile *f = loadFile(fp);
+    b->numLines = f->numLines;
+    for (int i = 0; i < f->numLines; ++i) {
+        b->line->content->fsz = f->lengths[i];
+        b->line->content->fst = f->lines[i];
+        b->line->next = malloc(sizeof(LineNode));
+        b->line->next->prev = b->line;
+        b->line->next->next = NULL;
+        b->line->next->content = gb_new();
+        b->line = b->line->next;
+    }
+    b->line = b->line->prev;
+    b->line->next = NULL;
+    b_goToStart(b);
+    return b;
 }
 
 void b_insertLine(Buffer *b)
@@ -129,4 +152,12 @@ void b_cursorDown(Buffer *b)
 void b_cursesPositionCursor(Buffer *b, int xOff, int yOff)
 {
     move(b->currentLine + yOff, gb_getPosition(b->line->content) + xOff);
+}
+
+void b_goToStart(Buffer *b)
+{
+    while (b->line->prev)
+        b->line = b->line->prev;
+    b->currentLine = 0;
+    gb_goToStart(b->line->content);
 }

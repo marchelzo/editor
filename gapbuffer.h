@@ -11,7 +11,11 @@
 
     GapBuffer *gb_new(void);
 
+    GapBuffer *gb_fromCString(char *s, size_t n);
+
     void gb_position(GapBuffer *gb, int p);
+
+    int gb_forcePosition(GapBuffer*, int p);
 
     int gb_getPosition(GapBuffer *gb);
 
@@ -38,5 +42,6 @@
     void gb_moveLeft(GapBuffer*, int n);
 
     void gb_moveRight(GapBuffer*, int n);
+
 
 #endif

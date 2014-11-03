@@ -5,12 +5,13 @@
 
 #include "mode.h"
 #include "buffer.h"
+#include "editbuffer.h"
 
 /* active Editor Mode global */
 extern EditorMode g_mode;
 
 /* current buffer global */
-extern Buffer *g_cb;
+extern EditBuffer *g_cb;
 
 /* global input handler */
 extern void (*g_handleInput)(int);
