@@ -15,4 +15,7 @@ extern Buffer *g_cb;
 /* global input handler */
 extern void (*g_handleInput)(int);
 
+/* global message for debugging */
+extern char *g_msg;
+
 #endif

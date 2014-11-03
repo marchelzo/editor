@@ -32,12 +32,14 @@ void b_insertLine(Buffer *b)
     LineNode *n = malloc(sizeof(LineNode));
     n->prev = b->line;
     n->next = b->line->next;
+    if (b->line->next != NULL)
+        b->line->next->prev = n;
     b->line->next = n;
     n->content = gb_new();
     n->content->fst = b->line->content->snd;
     n->content->fsz = b->line->content->ssz;
     /* reverse the bytes in the new line, to account for snd being backwards */
-    //reverseBytes(n->content->fst, n->content->fsz);
+    reverseBytes(n->content->fst, n->content->fsz);
     gb_goToStart(n->content);
     b->line->content->ssz = 0;
     b->line->content->snd = malloc(1);
@@ -116,8 +118,9 @@ void b_cursorUp(Buffer *b)
 void b_cursorDown(Buffer *b)
 {
     // TODO: refactor - add scroll(int) function instead of hard coding bounds checking here
-    if (b->line->next == NULL)
+    if (b->line->next == NULL) {
         return;
+    }
     b->line = b->line->next;
     ++b->currentLine;
 }
