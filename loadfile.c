@@ -23,8 +23,8 @@ LoadedFile *loadFile(FILE *f)
             ++len;
         }
         if (memForLinePtrs - 1 == numLines) {
-            lns = realloc(lns, memForLinePtrs * 2);
-            lens = realloc(lens, memForLinePtrs * 2);
+            lns = realloc(lns, memForLinePtrs * 2 * sizeof(char*));
+            lens = realloc(lens, memForLinePtrs * 2 * sizeof(size_t));
             memForLinePtrs *= 2;
         }
         lns[numLines] = l;
