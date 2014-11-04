@@ -6,6 +6,8 @@
 #include "config.h"
 #include "normal.h"
 #include "state.h"
+#include "insert.h"
+#include "command.h"
 
 EditBuffer *buf_new(void)
 {
@@ -72,4 +74,71 @@ void buf_updateScrollPosition(EditBuffer *b)
         b->xScroll = gb_getPosition(b->b->line->content);
     if (b->xScroll + g_termCols <= gb_getPosition(b->b->line->content))
         b->xScroll = gb_getPosition(b->b->line->content) - g_termCols + 1;
+}
+
+void buf_nextLine(EditBuffer *b, int n)
+{
+    int i = 0;
+    while (i < n && b_nextLine(b->b) == 0)
+        ++i;
+}
+
+void buf_newLineBelow(EditBuffer *b)
+{
+    buf_moveToEOL(b);
+    b_insertChar(b->b, '\n');
+
+}
+
+void buf_newLineAbove(EditBuffer *b)
+{
+    buf_moveToSOL(b);
+    b_insertChar(b->b, '\n');
+    buf_prevLine(b, 1);
+}
+
+void buf_moveToEOL(EditBuffer *b)
+{
+    b_moveToEOL(b->b);
+}
+
+void buf_moveToSOL(EditBuffer *b)
+{
+    b_moveToSOL(b->b);
+}
+
+void buf_prevLine(EditBuffer *b, int n)
+{
+    int i = 0;
+    while (i < n && b_prevLine(b->b) == 0)
+        ++i;
+}
+
+void buf_appendEOL(EditBuffer *b)
+{
+    buf_moveToEOL(b);
+    buf_setMode(b, INSERT);
+}
+
+void buf_insertSOL(EditBuffer *b)
+{
+    buf_moveToSOL(b);
+    buf_setMode(b, INSERT);
+}
+
+void buf_setMode(EditBuffer *b, EditorMode mode)
+{
+    switch (mode) {
+    case INSERT:
+        b->mode = INSERT;
+        b->handleInput = insertHandler;
+        break;
+    case NORMAL:
+        b->mode = NORMAL;
+        b->handleInput = normalHandler;
+        break;
+    case COMMAND:
+        b->mode = COMMAND;
+        b->handleInput = commandHandler;
+    }
 }

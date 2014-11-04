@@ -178,3 +178,32 @@ int b_isEmpty(Buffer *b)
 {
     return b->numLines == 1 && gb_length(b->line->content) == 0;
 }
+
+int b_nextLine(Buffer *b)
+{
+    if (b->line->next) {
+        b->line = b->line->next;
+        ++b->currentLine;
+    } else return 1;
+    return 0;
+}
+
+int b_prevLine(Buffer *b)
+{
+    if (b->line->prev) {
+        b->line = b->line->prev;
+        --b->currentLine;
+    } else return 1;
+    return 0;
+}
+
+void b_moveToEOL(Buffer *b)
+{
+    gb_goToEnd(b->line->content);
+}
+
+void b_moveToSOL(Buffer *b)
+{
+    gb_goToStart(b->line->content);
+}
+

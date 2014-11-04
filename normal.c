@@ -14,6 +14,12 @@
 #define KEY_INSERT     'i'
 #define KEY_APPEND     'a'
 
+#define KEY_NL_BELOW   'o'
+#define KEY_NL_ABOVE   'O'
+
+#define KEY_APPEND_EOL 'A'
+#define KEY_INSERT_SOL 'I'
+
 #define KEY_COM_MODE   ';'
 
 void normalHandler(int c)
@@ -52,9 +58,25 @@ void normalHandler(int c)
         b_cursorRight(g_cb->b);
         g_cb->handleInput = insertHandler;
         break;
+    case KEY_NL_BELOW:
+        buf_newLineBelow(g_cb);
+        g_cb->mode = INSERT;
+        g_cb->handleInput = insertHandler;
+        break;
+    case KEY_NL_ABOVE:
+        buf_newLineAbove(g_cb);
+        g_cb->mode = INSERT;
+        g_cb->handleInput = insertHandler;
+        break;
     case KEY_COM_MODE:
         g_cb->mode = COMMAND;
         g_cb->handleInput = commandHandler;
+        break;
+    case KEY_APPEND_EOL:
+        buf_appendEOL(g_cb);
+        break;
+    case KEY_INSERT_SOL:
+        buf_insertSOL(g_cb);
         break;
     }
     if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))

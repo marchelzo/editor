@@ -30,6 +30,10 @@
     void b_cursorUp(Buffer *b);
     void b_cursorDown(Buffer *b);
     void b_goToStart(Buffer *b);
+    int  b_nextLine(Buffer *b);
+    int  b_prevLine(Buffer *b);
+    void b_moveToEOL(Buffer *b);
+    void b_moveToSOL(Buffer *b);
 
     int b_isEmpty(Buffer *b);
 #endif

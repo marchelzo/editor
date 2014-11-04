@@ -28,4 +28,22 @@ void buf_updateScrollPosition(EditBuffer *b);
 
 EditorMode buf_mode(EditBuffer *b);
 
+void buf_newLineAbove(EditBuffer *b);
+
+void buf_newLineBelow(EditBuffer *b);
+
+void buf_nextLine(EditBuffer *b, int n);
+
+void buf_moveToEOL(EditBuffer *b);
+
+void buf_moveToSOL(EditBuffer *b);
+
+void buf_prevLine(EditBuffer *b, int n);
+
+void buf_setMode(EditBuffer *b, EditorMode mode);
+
+void buf_appendEOL(EditBuffer *b);
+
+void buf_insertSOL(EditBuffer *b);
+
 #endif
