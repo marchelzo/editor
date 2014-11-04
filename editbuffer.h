@@ -24,6 +24,8 @@ void buf_moveToLastCharOnCurrentLine(EditBuffer*);
 
 int buf_isAtEOL(EditBuffer*);
 
+void buf_updateScrollPosition(EditBuffer *b);
+
 EditorMode buf_mode(EditBuffer *b);
 
 #endif

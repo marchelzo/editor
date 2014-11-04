@@ -58,3 +58,11 @@ int buf_isAtEOL(EditBuffer *b)
 {
     return gb_length(b->b->line->content) == gb_getPosition(b->b->line->content);
 }
+
+void buf_updateScrollPosition(EditBuffer *b)
+{
+    if (b->yScroll > b->b->currentLine)
+        b->yScroll = b->b->currentLine;
+    if (b->yScroll + g_termRows <= b->b->currentLine)
+        b->yScroll = b->b->currentLine - g_termRows + 1;
+}

@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
         c = getch();
         g_cb->handleInput(c);
         clear();
+        buf_updateScrollPosition(g_cb);
         b_cursesPrint(g_cb->b, 0, 0);
         b_cursesPositionCursor(g_cb->b, 0, 0);
         refresh();
