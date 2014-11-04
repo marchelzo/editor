@@ -10,11 +10,23 @@
 EditBuffer *buf_new(void)
 {
     EditBuffer *b = malloc(sizeof(EditBuffer));
+
     b->b = b_new();
     b->conf = malloc(sizeof(Config));
+
+    /* start the new buffer in NORMAL mode */
     b->mode = NORMAL;
     b->handleInput = normalHandler;
+
+    /* the new buffer is not yet associated with a file on disk */
     b->fileName = NULL;
+
+    /* the cursor is at the first character in the buffer
+     * so xScroll and yScroll are both set to 0
+     */
+    b->xScroll = 0;
+    b->yScroll = 0;
+
     return b;
 }
 

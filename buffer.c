@@ -7,6 +7,7 @@
 #include "buffer.h"
 #include "gapbuffer.h"
 #include "loadfile.h"
+#include "state.h"
 
 static void reverseBytes(void *start, int size) {
     if (size == 0) return;
@@ -89,14 +90,21 @@ void b_insertString(Buffer *b, const char *s)
 void b_cursesPrint(Buffer *b, int x, int y)
 {
     LineNode *c = b->line;
-    while (b->line->prev != NULL)
+    size_t currentLine = b->currentLine;
+    while (b->currentLine > g_cb->yScroll) {
         b->line = b->line->prev;
-    for (int i = 0; i < b->numLines; ++i) {
+        --b->currentLine;
+    }
+    for (int i = 0; i < g_termRows; ++i) {
         move(y + i, x);
-        gb_cursesPrint(b->line->content);
-        b->line = b->line->next;
+        gb_cursesPrint(b->line->content, g_cb->xScroll, g_termCols - x);
+        if (b->line->next)
+            b->line = b->line->next;
+        else
+            break;
     }
     b->line = c;
+    b->currentLine = currentLine;
 }
 
 void b_backspace(Buffer *b)
@@ -147,16 +155,15 @@ void b_cursorUp(Buffer *b)
 void b_cursorDown(Buffer *b)
 {
     // TODO: refactor - add scroll(int) function instead of hard coding bounds checking here
-    if (b->line->next == NULL) {
+    if (b->line->next == NULL)
         return;
-    }
     b->line = b->line->next;
     ++b->currentLine;
 }
 
 void b_cursesPositionCursor(Buffer *b, int xOff, int yOff)
 {
-    move(b->currentLine + yOff, gb_getPosition(b->line->content) + xOff);
+    move(b->currentLine + yOff - g_cb->yScroll, gb_getPosition(b->line->content) + xOff - g_cb->xScroll);
 }
 
 void b_goToStart(Buffer *b)

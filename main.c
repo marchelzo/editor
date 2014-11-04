@@ -11,6 +11,8 @@
 /* globals */
 EditBuffer *g_cb;
 char *g_msg;
+char *g_command;
+int g_termRows, g_termCols;
 
 int main(int argc, char *argv[])
 {
@@ -20,8 +22,14 @@ int main(int argc, char *argv[])
     nonl();
     noecho();
 
+    /* get the terminal dimensions */
+    getmaxyx(stdscr, g_termRows, g_termCols);
+
     g_cb = buf_new();
     buf_loadFile(g_cb, argv[1]);
+
+    g_command = malloc(1);
+    g_command[0] = '\0';
 
     int c;
     while (1) {

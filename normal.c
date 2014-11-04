@@ -4,6 +4,7 @@
 #include "insert.h"
 #include "quit.h"
 #include "gapbuffer.h"
+#include "command.h"
 
 #define KEY_MOVE_LEFT  'h'
 #define KEY_MOVE_RIGHT 'l'
@@ -12,6 +13,8 @@
 
 #define KEY_INSERT     'i'
 #define KEY_APPEND     'a'
+
+#define KEY_COM_MODE   ';'
 
 void normalHandler(int c)
 {
@@ -32,7 +35,6 @@ void normalHandler(int c)
             buf_moveToLastCharOnCurrentLine(g_cb);
         else
             gb_position(g_cb->b->line->content, g_cb->highCol);
-        g_cb->visCol = gb_getPosition(g_cb->b->line->content);
         break;
     case KEY_MOVE_DOWN:
         b_cursorDown(g_cb->b);
@@ -40,7 +42,6 @@ void normalHandler(int c)
             buf_moveToLastCharOnCurrentLine(g_cb);
         else
             gb_position(g_cb->b->line->content, g_cb->highCol);
-        g_cb->visCol = gb_getPosition(g_cb->b->line->content);
         break;
     case KEY_INSERT:
         g_cb->mode = INSERT;
@@ -50,6 +51,10 @@ void normalHandler(int c)
         g_cb->mode = INSERT;
         b_cursorRight(g_cb->b);
         g_cb->handleInput = insertHandler;
+        break;
+    case KEY_COM_MODE:
+        g_cb->mode = COMMAND;
+        g_cb->handleInput = commandHandler;
         break;
     }
     if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))

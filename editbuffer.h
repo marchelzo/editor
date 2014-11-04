@@ -11,7 +11,8 @@ typedef struct {
     Config *conf;
     EditorMode mode;
     int highCol;
-    int visCol;
+    int xScroll;
+    int yScroll;
     char *fileName;
 } EditBuffer;
 

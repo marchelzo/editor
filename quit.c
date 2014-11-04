@@ -3,7 +3,8 @@
 void g_edit_quit(void)
 {
     clear();
+    move(0,0);
+    refresh();
     endwin();
-    curs_set(1);
     exit(0);
 }

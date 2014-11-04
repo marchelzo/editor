@@ -39,7 +39,7 @@ void gb_goToEnd(GapBuffer *gb);
 
 void gb_goToStart(GapBuffer *gb);
 
-void gb_cursesPrint(GapBuffer *gb);
+void gb_cursesPrint(GapBuffer *gb, int start, int max);
 
 void gb_free(GapBuffer *gb);
 

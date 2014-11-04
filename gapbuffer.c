@@ -87,11 +87,11 @@ char *gb_substring(GapBuffer *gb, int begin, int end)
         ++i;
         ++k;
     }
-    k = 0;
-    while (i < len && k < gb->ssz) {
+    k = gb->ssz - 1;
+    while (i < len && k >= 0) {
         s[i] = gb->snd[k];
         ++i;
-        ++k;
+        --k;
     }
     s[len] = '\0';
     return s;
@@ -114,12 +114,19 @@ char *gb_cString(GapBuffer *gb)
     return gb_substring(gb, 0, gb_length(gb));
 }
 
-void gb_cursesPrint(GapBuffer *b)
+void gb_cursesPrint(GapBuffer *b, int start, int max)
 {
-    for (int i = 0; i < b->fsz; ++i)
+    int printed = 0;
+    for (int i = start; i < b->fsz && printed < max; ++i) {
         addch(b->fst[i]);
-    for (int i = b->ssz - 1; i >= 0; --i)
+        ++printed;
+    }
+    start -= b->fsz;
+    if (start < 0) start = 0;
+    for (int i = (int) b->ssz - 1 - start; i >= 0 && printed < max; --i) {
         addch(b->snd[i]);
+        ++printed;
+    }
 }
 
 void gb_goToEnd(GapBuffer *b)
