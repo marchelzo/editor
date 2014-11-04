@@ -20,7 +20,7 @@ EditBuffer *buf_new(void);
 
 int buf_loadFile(EditBuffer *b, char *fn);
 
-void buf_moveToLastCharOnCurrentLine(EditBuffer*);
+void buf_goToLastCharOnCurrentLine(EditBuffer*);
 
 int buf_isAtEOL(EditBuffer*);
 
@@ -32,18 +32,30 @@ void buf_newLineAbove(EditBuffer *b);
 
 void buf_newLineBelow(EditBuffer *b);
 
-void buf_nextLine(EditBuffer *b, int n);
+void buf_goToEOL(EditBuffer *b);
 
-void buf_moveToEOL(EditBuffer *b);
+void buf_goToSOL(EditBuffer *b);
 
-void buf_moveToSOL(EditBuffer *b);
+void buf_goToLine(EditBuffer *b, int n);
 
 void buf_prevLine(EditBuffer *b, int n);
+
+void buf_nextLine(EditBuffer *b, int n);
+
+void buf_goToFirstLine(EditBuffer *b);
+
+void buf_goToLastLine(EditBuffer *b);
 
 void buf_setMode(EditBuffer *b, EditorMode mode);
 
 void buf_appendEOL(EditBuffer *b);
 
 void buf_insertSOL(EditBuffer *b);
+
+char *buf_getCurrentLine(EditBuffer *b);
+
+size_t buf_currentLineNumber(EditBuffer *b);
+
+size_t buf_numLines(EditBuffer *b);
 
 #endif

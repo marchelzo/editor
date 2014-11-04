@@ -5,6 +5,7 @@
 #include "mode.h"
 #include "quit.h"
 #include "normal.h"
+#include "bufwrite.h"
 
 static void appendToCommand(char c);
 
@@ -38,5 +39,12 @@ static void appendToCommand(char c)
 
 void runCommand(const char *com)
 {
-    if (strcmp(com, "q") == 0) g_edit_quit();
+    if (strcmp(com, "q") == 0) {
+        g_edit_quit();
+        return;
+    }
+    if (strcmp(com, "w") == 0) {
+        buf_write(g_cb);
+        return;
+    }
 }

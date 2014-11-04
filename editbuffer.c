@@ -36,21 +36,27 @@ int buf_loadFile(EditBuffer *b, char *fn)
 {
     if (b_isEmpty(b->b)) {
         FILE *fp = fopen(fn, "r");
-        if (!fp) {
-            g_msg = "Failed to open file";
-            return 1;
+        if (fp) {
+            b->b = b_fromFile(fp);
+            fclose(fp);
+            b->fileName = fn;
+            return 0;
+        } else {
+            fp = fopen(fn, "w");
+            if (fp) {
+                b->fileName = fn;
+                return 1;
+            } else {
+                return 2;
+            }
         }
-        b->b = b_fromFile(fp);
-        fclose(fp);
-        b->fileName = fn;
     } else {
         g_msg = "Unsaved text in buffer";
-        return 1;
+        return 3;
     }
-    return 0;
 }
 
-void buf_moveToLastCharOnCurrentLine(EditBuffer *b)
+void buf_goToLastCharOnCurrentLine(EditBuffer *b)
 {
     gb_goToEnd(b->b->line->content);
     gb_moveLeft(b->b->line->content, 1);
@@ -85,26 +91,26 @@ void buf_nextLine(EditBuffer *b, int n)
 
 void buf_newLineBelow(EditBuffer *b)
 {
-    buf_moveToEOL(b);
+    buf_goToEOL(b);
     b_insertChar(b->b, '\n');
 
 }
 
 void buf_newLineAbove(EditBuffer *b)
 {
-    buf_moveToSOL(b);
+    buf_goToSOL(b);
     b_insertChar(b->b, '\n');
     buf_prevLine(b, 1);
 }
 
-void buf_moveToEOL(EditBuffer *b)
+void buf_goToEOL(EditBuffer *b)
 {
-    b_moveToEOL(b->b);
+    b_goToEOL(b->b);
 }
 
-void buf_moveToSOL(EditBuffer *b)
+void buf_goToSOL(EditBuffer *b)
 {
-    b_moveToSOL(b->b);
+    b_goToSOL(b->b);
 }
 
 void buf_prevLine(EditBuffer *b, int n)
@@ -116,13 +122,13 @@ void buf_prevLine(EditBuffer *b, int n)
 
 void buf_appendEOL(EditBuffer *b)
 {
-    buf_moveToEOL(b);
+    buf_goToEOL(b);
     buf_setMode(b, INSERT);
 }
 
 void buf_insertSOL(EditBuffer *b)
 {
-    buf_moveToSOL(b);
+    buf_goToSOL(b);
     buf_setMode(b, INSERT);
 }
 
@@ -141,4 +147,38 @@ void buf_setMode(EditBuffer *b, EditorMode mode)
         b->mode = COMMAND;
         b->handleInput = commandHandler;
     }
+}
+
+char *buf_getCurrentLine(EditBuffer *b)
+{
+    return b_getCurrentLine(b->b);
+}
+
+size_t buf_currentLineNumber(EditBuffer *b)
+{
+    return b->b->currentLine;
+}
+
+size_t buf_numLines(EditBuffer *b)
+{
+    return b->b->numLines;
+}
+
+void buf_goToLine(EditBuffer *b, int n)
+{
+    if (n > b->b->currentLine) {
+        buf_nextLine(b, n - b->b->currentLine);
+    } else {
+        buf_prevLine(b, b->b->currentLine - n);
+    }
+}
+
+void buf_goToFirstLine(EditBuffer *b)
+{
+    buf_goToLine(b, 0);
+}
+
+void buf_goToLastLine(EditBuffer *b)
+{
+    buf_goToLine(b, b->b->numLines - 1);
 }

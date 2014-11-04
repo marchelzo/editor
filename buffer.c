@@ -36,6 +36,8 @@ Buffer *b_fromFile(FILE *fp)
 {
     Buffer *b = b_new();
     LoadedFile *f = loadFile(fp);
+    if (f->numLines == 0 && f->lines[0] == NULL)
+        return b;
     b->numLines = f->numLines;
     for (int i = 0; i < f->numLines; ++i) {
         b->line->content->fsz = f->lengths[i];
@@ -197,13 +199,17 @@ int b_prevLine(Buffer *b)
     return 0;
 }
 
-void b_moveToEOL(Buffer *b)
+void b_goToEOL(Buffer *b)
 {
     gb_goToEnd(b->line->content);
 }
 
-void b_moveToSOL(Buffer *b)
+void b_goToSOL(Buffer *b)
 {
     gb_goToStart(b->line->content);
 }
 
+char *b_getCurrentLine(Buffer *b)
+{
+    return gb_cString(b->line->content);
+}

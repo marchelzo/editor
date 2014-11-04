@@ -38,14 +38,14 @@ void normalHandler(int c)
     case KEY_MOVE_UP:
         b_cursorUp(g_cb->b);
         if (g_cb->highCol >= gb_length(g_cb->b->line->content))
-            buf_moveToLastCharOnCurrentLine(g_cb);
+            buf_goToLastCharOnCurrentLine(g_cb);
         else
             gb_position(g_cb->b->line->content, g_cb->highCol);
         break;
     case KEY_MOVE_DOWN:
         b_cursorDown(g_cb->b);
         if (g_cb->highCol >= gb_length(g_cb->b->line->content))
-            buf_moveToLastCharOnCurrentLine(g_cb);
+            buf_goToLastCharOnCurrentLine(g_cb);
         else
             gb_position(g_cb->b->line->content, g_cb->highCol);
         break;
@@ -80,5 +80,5 @@ void normalHandler(int c)
         break;
     }
     if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))
-        buf_moveToLastCharOnCurrentLine(g_cb);
+        buf_goToLastCharOnCurrentLine(g_cb);
 }

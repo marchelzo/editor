@@ -32,8 +32,9 @@
     void b_goToStart(Buffer *b);
     int  b_nextLine(Buffer *b);
     int  b_prevLine(Buffer *b);
-    void b_moveToEOL(Buffer *b);
-    void b_moveToSOL(Buffer *b);
+    void b_goToEOL(Buffer *b);
+    void b_goToSOL(Buffer *b);
+    char *b_getCurrentLine(Buffer *b);
 
     int b_isEmpty(Buffer *b);
 #endif
