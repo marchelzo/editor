@@ -61,8 +61,15 @@ int buf_isAtEOL(EditBuffer *b)
 
 void buf_updateScrollPosition(EditBuffer *b)
 {
+    /* adjust vertical scroll if necessary */
     if (b->yScroll > b->b->currentLine)
         b->yScroll = b->b->currentLine;
     if (b->yScroll + g_termRows <= b->b->currentLine)
         b->yScroll = b->b->currentLine - g_termRows + 1;
+
+    /* adjust horizontal scroll if necessary */
+    if (b->xScroll > gb_getPosition(b->b->line->content))
+        b->xScroll = gb_getPosition(b->b->line->content);
+    if (b->xScroll + g_termCols <= gb_getPosition(b->b->line->content))
+        b->xScroll = gb_getPosition(b->b->line->content) - g_termCols + 1;
 }
