@@ -31,5 +31,5 @@
     void b_cursorDown(Buffer *b);
     void b_goToStart(Buffer *b);
 
-
+    int b_isEmpty(Buffer *b);
 #endif

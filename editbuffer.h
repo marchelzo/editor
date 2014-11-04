@@ -12,9 +12,12 @@ typedef struct {
     EditorMode mode;
     int highCol;
     int visCol;
+    char *fileName;
 } EditBuffer;
 
 EditBuffer *buf_new(void);
+
+int buf_loadFile(EditBuffer *b, char *fn);
 
 void buf_moveToLastCharOnCurrentLine(EditBuffer*);
 

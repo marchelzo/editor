@@ -20,9 +20,8 @@ int main(int argc, char *argv[])
     nonl();
     noecho();
 
-    FILE *f = fopen(argv[1], "r");
     g_cb = buf_new();
-    g_cb->b = b_fromFile(f);
+    buf_loadFile(g_cb, argv[1]);
 
     int c;
     while (1) {

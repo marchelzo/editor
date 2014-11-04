@@ -166,3 +166,8 @@ void b_goToStart(Buffer *b)
     b->currentLine = 0;
     gb_goToStart(b->line->content);
 }
+
+int b_isEmpty(Buffer *b)
+{
+    return b->numLines == 1 && gb_length(b->line->content) == 0;
+}
