@@ -30,6 +30,8 @@ void normalHandler(int c)
     case KEY_MOVE_RIGHT:
         b_cursorRight(g_cb->b);
         g_cb->highCol = gb_getPosition(g_cb->b->line->content);
+        if (g_cb->highCol == buf_columnNumber(g_cb))
+            --g_cb->highCol;
         break;
     case KEY_MOVE_LEFT:
         b_cursorLeft(g_cb->b);
