@@ -14,7 +14,7 @@ LoadedFile *loadFile(FILE *f)
         char *l = malloc(100);
         while ((c = fgetc(f))) {
             if (c == '\n') break;
-            if (c == EOF) goto end;
+            if (c == EOF) goto lastline;
             if (len == mem) {
                 l = realloc(l, mem * 2);
                 mem *= 2;
@@ -22,7 +22,7 @@ LoadedFile *loadFile(FILE *f)
             l[len] = c;
             ++len;
         }
-        if (memForLinePtrs - 1 == numLines) {
+        if (memForLinePtrs - 2 == numLines) {
             lns = realloc(lns, memForLinePtrs * 2 * sizeof(char*));
             lens = realloc(lens, memForLinePtrs * 2 * sizeof(size_t));
             memForLinePtrs *= 2;
@@ -30,6 +30,14 @@ LoadedFile *loadFile(FILE *f)
         lns[numLines] = l;
         lens[numLines] = len;
         ++numLines;
+        continue;
+    lastline:
+        if (len > 0) {
+            lns[numLines] = l;
+            lens[numLines] = len;
+            ++numLines;
+        }
+        goto end;
     }
     end:
     lf->lines = lns;
