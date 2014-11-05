@@ -11,22 +11,24 @@ static void appendToCommand(char c);
 
 void commandHandler(int c)
 {
-    switch (c) {
-    case 27:
-        g_cb->mode = NORMAL;
-        break;
-    case 10:
-    case 13:
-        runCommand(g_command);
-        free(g_command);
-        g_command = malloc(1);
-        g_command[0] = '\0';
-        g_cb->mode = NORMAL;
-        g_cb->handleInput = normalHandler;
-        break;
-    default:
-        appendToCommand(c);
-    }
+    do {
+        switch (c) {
+        case 27:
+            g_cb->mode = NORMAL;
+            g_cb->handleInput = normalHandler;
+            free(g_command);
+            return;
+        case 10:
+        case 13:
+            runCommand(g_command);
+            free(g_command);
+            g_cb->mode = NORMAL;
+            g_cb->handleInput = normalHandler;
+            return;
+        default:
+            appendToCommand(c);
+        }
+    } while ((c = getch()));
 }
 
 static void appendToCommand(char c)

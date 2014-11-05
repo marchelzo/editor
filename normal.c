@@ -73,6 +73,7 @@ void normalHandler(int c)
     case KEY_COM_MODE:
         g_cb->mode = COMMAND;
         g_cb->handleInput = commandHandler;
+        g_command = calloc(1,sizeof(char));
         break;
     case KEY_APPEND_EOL:
         buf_appendEOL(g_cb);
