@@ -218,7 +218,7 @@ void b_deleteCurrentLine(Buffer *b)
 {
     /* return early if there are no other lines in the buffer */
     if (!(b->line->prev || b->line->next)) return;
-
+    /* make a pointer to the current line so that we can free it after removing it from the buffer */
     LineNode *n = b->line;
 
     if (b->line->prev)
@@ -232,11 +232,14 @@ void b_deleteCurrentLine(Buffer *b)
         b->line = b->line->prev;
         --b->currentLine;
     }
-
     /* decrement the line count */
     --b->numLines;
-
     /* free the content of the deleted line */
     gb_free(n->content);
 
+}
+
+size_t b_columnNumber(Buffer *b)
+{
+    return (size_t) gb_getPosition(b->line->content);
 }

@@ -58,6 +58,10 @@ char *buf_getCurrentLine(EditBuffer *b);
 
 size_t buf_currentLineNumber(EditBuffer *b);
 
+size_t buf_columnNumber(EditBuffer *b);
+
 size_t buf_numLines(EditBuffer *b);
+
+int buf_goToColumn(EditBuffer *b, int n);
 
 #endif

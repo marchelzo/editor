@@ -187,3 +187,13 @@ void buf_deleteCurrentLine(EditBuffer *b)
 {
     b_deleteCurrentLine(b->b);
 }
+
+size_t buf_columnNumber(EditBuffer *b)
+{
+    return b_columnNumber(b->b);
+}
+
+int buf_goToColumn(EditBuffer *b, int n)
+{
+    gb_forcePosition(b->b->line->content, n);
+}

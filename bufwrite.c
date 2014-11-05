@@ -11,6 +11,9 @@ int buf_write(EditBuffer *b)
     /* save the current line so that we can return to it after writing the file */
     size_t currentLine = buf_currentLineNumber(b);
 
+    /* likewise for the column */
+    size_t columnNumber = buf_columnNumber(b);
+
     size_t numLines = buf_numLines(b);
 
     /* move to the first line in the buffer */
@@ -55,6 +58,9 @@ int buf_write(EditBuffer *b)
 
     /* go back to the line that we were on to begin with */
     buf_goToLine(b, currentLine);
+
+    /* go back the the original column number */
+    buf_goToColumn(b, columnNumber);
 
     /* by some miracle, everything went according to plan and we can return 0 */
     return 0;
