@@ -64,4 +64,8 @@ size_t buf_numLines(EditBuffer *b);
 
 int buf_goToColumn(EditBuffer *b, int n);
 
+void buf_commandMode(EditBuffer *b);
+
+void buf_drawCommandLine(EditBuffer *b);
+
 #endif

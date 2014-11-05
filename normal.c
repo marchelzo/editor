@@ -71,9 +71,7 @@ void normalHandler(int c)
         g_cb->handleInput = insertHandler;
         break;
     case KEY_COM_MODE:
-        g_cb->mode = COMMAND;
-        g_cb->handleInput = commandHandler;
-        g_command = calloc(1,sizeof(char));
+        buf_commandMode(g_cb);
         break;
     case KEY_APPEND_EOL:
         buf_appendEOL(g_cb);
@@ -91,6 +89,7 @@ void normalHandler(int c)
     case 'G':
         buf_goToLastLine(g_cb);
         buf_goToSOL(g_cb);
+        break;
     case 'd':
         c = getch();
         if (c == 'd')

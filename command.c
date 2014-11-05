@@ -11,6 +11,8 @@ static void appendToCommand(char c);
 
 void commandHandler(int c)
 {
+    mvprintw(g_termRows - 1, 0, ":");
+    refresh();
     do {
         switch (c) {
         case 27:
@@ -27,6 +29,7 @@ void commandHandler(int c)
             return;
         default:
             appendToCommand(c);
+            mvprintw(g_termRows - 1,0,":%s", g_command);
         }
     } while ((c = getch()));
 }

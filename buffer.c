@@ -97,7 +97,7 @@ void b_cursesPrint(Buffer *b, int x, int y)
         b->line = b->line->prev;
         --b->currentLine;
     }
-    for (int i = 0; i < g_termRows; ++i) {
+    for (int i = 0; i < g_termRows - 1; ++i) {
         move(y + i, x);
         gb_cursesPrint(b->line->content, g_cb->xScroll, g_termCols - x);
         if (b->line->next)

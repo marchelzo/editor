@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
     initscr();
     clear();
     raw();
+    cbreak();
     nonl();
     noecho();
 
@@ -32,6 +33,8 @@ int main(int argc, char *argv[])
     getmaxyx(stdscr, g_termRows, g_termCols);
 
     int c;
+    b_cursesPrint(g_cb->b, 0, 0);
+    b_cursesPositionCursor(g_cb->b, 0, 0);
     while (1) {
         c = getch();
         g_cb->handleInput(c);

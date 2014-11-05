@@ -8,6 +8,7 @@
 #include "state.h"
 #include "insert.h"
 #include "command.h"
+#include <curses.h>
 
 EditBuffer *buf_new(void)
 {
@@ -196,4 +197,18 @@ size_t buf_columnNumber(EditBuffer *b)
 int buf_goToColumn(EditBuffer *b, int n)
 {
     gb_forcePosition(b->b->line->content, n);
+}
+
+void buf_commandMode(EditBuffer *b)
+{
+    buf_drawCommandLine(b);
+    b->mode = COMMAND;
+    b->handleInput = commandHandler;
+    refresh();
+}
+
+void buf_drawCommandLine(EditBuffer *b)
+{
+    g_command = calloc(1,1);
+    mvaddch(g_termRows - 1, 0, ':');
 }
