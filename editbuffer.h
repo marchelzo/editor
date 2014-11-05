@@ -52,6 +52,8 @@ void buf_appendEOL(EditBuffer *b);
 
 void buf_insertSOL(EditBuffer *b);
 
+void buf_deleteCurrentLine(EditBuffer *b);
+
 char *buf_getCurrentLine(EditBuffer *b);
 
 size_t buf_currentLineNumber(EditBuffer *b);

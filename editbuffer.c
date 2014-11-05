@@ -182,3 +182,8 @@ void buf_goToLastLine(EditBuffer *b)
 {
     buf_goToLine(b, b->b->numLines - 1);
 }
+
+void buf_deleteCurrentLine(EditBuffer *b)
+{
+    b_deleteCurrentLine(b->b);
+}

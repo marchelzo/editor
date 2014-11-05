@@ -213,3 +213,30 @@ char *b_getCurrentLine(Buffer *b)
 {
     return gb_cString(b->line->content);
 }
+
+void b_deleteCurrentLine(Buffer *b)
+{
+    /* return early if there are no other lines in the buffer */
+    if (!(b->line->prev || b->line->next)) return;
+
+    LineNode *n = b->line;
+
+    if (b->line->prev)
+        b->line->prev->next = b->line->next;
+    if (b->line->next)
+        b->line->next->prev = b->line->prev;
+    if (b->line->next)
+        b->line = b->line->next;
+    else {
+        /* we were on the very last line, and so we are forced to go to the previous line */
+        b->line = b->line->prev;
+        --b->currentLine;
+    }
+
+    /* decrement the line count */
+    --b->numLines;
+
+    /* free the content of the deleted line */
+    gb_free(n->content);
+
+}

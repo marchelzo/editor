@@ -78,6 +78,21 @@ void normalHandler(int c)
     case KEY_INSERT_SOL:
         buf_insertSOL(g_cb);
         break;
+    case 'g':
+        c = getch();
+        if (c == 'g') {
+            buf_goToFirstLine(g_cb);
+            buf_goToSOL(g_cb);
+        }
+        break;
+    case 'G':
+        buf_goToLastLine(g_cb);
+        buf_goToSOL(g_cb);
+    case 'd':
+        c = getch();
+        if (c == 'd')
+            buf_deleteCurrentLine(g_cb);
+        break;
     }
     if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))
         buf_goToLastCharOnCurrentLine(g_cb);

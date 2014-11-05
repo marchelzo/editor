@@ -23,6 +23,7 @@
     void b_insertString(Buffer *b, const char *s);
     void b_backspace(Buffer *b);
     void b_joinLine(Buffer *b);
+    void b_deleteCurrentLine(Buffer *b);
     void b_cursesPrint(Buffer *b, int xOff, int yOff);
     void b_cursesPositionCursor(Buffer *b, int xOff, int yOff);
     void b_cursorRight(Buffer *b);
