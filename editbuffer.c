@@ -1,5 +1,3 @@
-#include <stdbool.h>
-
 #include "editbuffer.h"
 #include "buffer.h"
 #include "gapbuffer.h"
@@ -29,6 +27,9 @@ EditBuffer *buf_new(void)
      */
     b->xScroll = 0;
     b->yScroll = 0;
+
+    /* set highCol to 0 so that the cursor stays in the first column if we scroll down */
+    b->highCol = 0;
 
     return b;
 }
@@ -201,10 +202,11 @@ int buf_goToColumn(EditBuffer *b, int n)
 
 void buf_commandMode(EditBuffer *b)
 {
-    buf_drawCommandLine(b);
     b->mode = COMMAND;
     b->handleInput = commandHandler;
-    refresh();
+    buf_drawCommandLine(b);
+    int c = getch();
+    g_cb->handleInput(c);
 }
 
 void buf_drawCommandLine(EditBuffer *b)
