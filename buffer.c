@@ -322,3 +322,43 @@ void b_insertSpaces(Buffer *b, unsigned char n)
     for (unsigned char i = 0; i < n; ++i)
         b_insertChar(b, ' ');
 }
+
+void b_forwardWord(Buffer *b)
+{
+    char current = b_charUnderCursor(b);
+    while (current != ' ') {
+        if (b_isAtEOF(b))
+            return;
+        if (b_isAtEOL(b)) {
+            b_cursorDown(b);
+            b_goToSOL(b);
+            if (b_isAtEOL(b))
+                return;
+        } else {
+            b_cursorRight(b);
+        }
+        current = b_charUnderCursor(b);
+    }
+    while (current == ' ') {
+        if (b_isAtEOF(b))
+            return;
+        if (b_isAtEOL(b)) {
+            b_cursorDown(b);
+            b_goToSOL(b);
+        } else {
+            b_cursorRight(b);
+        }
+        current = b_charUnderCursor(b);
+    }
+}
+
+unsigned char b_isAtEOL(Buffer *b)
+{
+    /* relies on implementation details of GAPBUFFER */
+    return b->line->content->ssz == 0;
+}
+
+unsigned char b_isAtEOF(Buffer *b)
+{
+    return b->currentLine + 1 == b->numLines && b_isAtEOL(b);
+}

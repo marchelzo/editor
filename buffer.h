@@ -44,5 +44,8 @@ void b_forwardUntil(Buffer *b, char c, unsigned char lines, unsigned char atLeas
 void b_backwardUntil(Buffer *b, char c, unsigned char lines, unsigned char atLeastOne);
 int b_isEmpty(Buffer *b);
 void b_goToColumn(Buffer *b, size_t col);
+void b_forwardWord(Buffer *b);
+unsigned char b_isAtEOL(Buffer *b);
+unsigned char b_isAtEOF(Buffer *b);
 
 #endif

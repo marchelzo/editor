@@ -119,8 +119,7 @@ void normalHandler(int c)
         break;
         }
     case 'W':
-        b_forwardUntil(g_cb->b, ' ', 1, 1);
-        b_cursorRight(g_cb->b);
+        b_forwardWord(g_cb->b);
     }
     if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))
         buf_goToLastCharOnCurrentLine(g_cb);
