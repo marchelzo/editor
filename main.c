@@ -20,6 +20,7 @@ HashMap *g_commandMap;
 int main(int argc, char *argv[])
 {
     g_cb = buf_new();
+    g_cb->conf->lineNumbers = 1;
     int b = buf_loadFile(g_cb, argv[1]);
 
     compl_initializeGlobalCommandList();

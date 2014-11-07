@@ -1,5 +1,3 @@
-#define _GNU_SOURCE
-
 #include <stdlib.h>
 #include <string.h>
 #include <curses.h>
@@ -99,8 +97,15 @@ void b_cursesPrint(Buffer *b, int x, int y)
     }
     for (int i = 0; i < g_termRows - 1; ++i) {
         move(y + i, x);
-        printw("%4d ", i + g_cb->yScroll + 1);
-        gb_cursesPrint(b->line->content, g_cb->xScroll, g_termCols - x - 4);
+
+        /* DRAW LINE NUMBERS IF THEY ARE ENABLED */
+        if (g_cb->conf->lineNumbers) {
+            printw("%4d ", i + g_cb->yScroll + 1);
+        }
+
+        int colOffSet = (g_cb->conf->lineNumbers) ? 5 : 0;
+
+        gb_cursesPrint(b->line->content, g_cb->xScroll, g_termCols - x - colOffSet);
         if (b->line->next)
             b->line = b->line->next;
         else
@@ -166,7 +171,10 @@ void b_cursorDown(Buffer *b)
 
 void b_cursesPositionCursor(Buffer *b, int xOff, int yOff)
 {
-    move(b->currentLine + yOff - g_cb->yScroll, gb_getPosition(b->line->content) + xOff - g_cb->xScroll + 5);
+    int x = b_columnNumber(b) + xOff - g_cb->xScroll;
+    if (g_cb->conf->lineNumbers)
+        x += 5;
+    move(b->currentLine + yOff - g_cb->yScroll, x);
 }
 
 void b_goToStart(Buffer *b)

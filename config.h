@@ -3,6 +3,7 @@
 
 typedef struct {
     int sw;
+    unsigned char lineNumbers;
 } Config;
 
 #endif
