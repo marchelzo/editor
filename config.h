@@ -2,7 +2,7 @@
 #define __CONFIG_H__
 
 typedef struct {
-    int sw;
+    unsigned char sw;
     unsigned char lineNumbers;
 } Config;
 

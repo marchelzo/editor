@@ -10,9 +10,7 @@ void insertHandler(int c)
 {
     switch (c) {
     case 27:
-        g_cb->mode = NORMAL;
-        b_cursorLeft(g_cb->b);
-        g_cb->handleInput = normalHandler;
+        buf_normalMode(g_cb);
         break;
     case 13:
         b_insertChar(g_cb->b, '\n');
@@ -23,16 +21,14 @@ void insertHandler(int c)
         b_backspace(g_cb->b);
         break;
     case KEY_TAB:
-        b_insertString(g_cb->b, "    ");
+        b_insertSpaces(g_cb->b, g_cb->conf->sw);
         break;
     case 'j':
         halfdelay(2);
         c = getch();
         cbreak();
         if (c == 'k') {
-            g_cb->mode = NORMAL;
-            b_cursorLeft(g_cb->b);
-            g_cb->handleInput = normalHandler;
+            buf_normalMode(g_cb);
             break;
         }
         b_insertChar(g_cb->b, 'j');

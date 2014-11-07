@@ -263,16 +263,14 @@ void b_forwardUntil(Buffer *b, char c, unsigned char lines, unsigned char atLeas
     if (atLeastOne)
         b_cursorRight(b);
     if (lines) {
-        char cur;
-        while ((cur = b_charUnderCursor(b))) {
-            if (cur == c)
+        while (1) {
+            if (b_charUnderCursor(b) == c || (b->currentLine + 1 == b->numLines && b->line->content->ssz == 0))
                 return;
-            b_cursorRight(b);
-            if (b->currentLine + 1 == b->numLines)
-                return;
-            if (b_columnNumber(b) + 1 == gb_length(b->line->content)) {
+            if (b->line->content->ssz == 0) {
                 b_cursorDown(b);
                 b_goToSOL(b);
+            } else {
+                b_cursorRight(b);
             }
         }
     } else {
@@ -317,4 +315,10 @@ void b_backwardUntil(Buffer *b, char c, unsigned char lines, unsigned char atLea
 void b_goToColumn(Buffer *b, size_t n)
 {
     gb_forcePosition(b->line->content, n);
+}
+
+void b_insertSpaces(Buffer *b, unsigned char n)
+{
+    for (unsigned char i = 0; i < n; ++i)
+        b_insertChar(b, ' ');
 }

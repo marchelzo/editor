@@ -206,7 +206,7 @@ void buf_commandMode(EditBuffer *b)
     b->handleInput = commandHandler;
     buf_drawCommandLine(b);
     int c = getch();
-    g_cb->handleInput(c);
+    b->handleInput(c);
 }
 
 void buf_drawCommandLine(EditBuffer *b)
@@ -224,4 +224,12 @@ void buf_centerOnCurrentLine(EditBuffer *b)
 char buf_charUnderCursor(EditBuffer *b)
 {
     return b_charUnderCursor(b->b);
+}
+
+void buf_normalMode(EditBuffer *b)
+{
+    b->mode = NORMAL;
+    b->handleInput = normalHandler;
+    b_cursorLeft(b->b);
+    b->highCol = gb_getPosition(b->b->line->content);
 }

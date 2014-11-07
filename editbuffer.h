@@ -72,4 +72,6 @@ void buf_centerOnCurrentLine(EditBuffer *b);
 
 char buf_charUnderCursor(EditBuffer *b);
 
+void buf_normalMode(EditBuffer *b);
+
 #endif

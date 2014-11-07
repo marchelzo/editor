@@ -22,6 +22,7 @@ Buffer *b_fromFile(FILE *f);
 void b_insertLine(Buffer *b);
 void b_insertChar(Buffer *b, char c);
 void b_insertString(Buffer *b, const char *s);
+void b_insertSpaces(Buffer *b, unsigned char n);
 void b_backspace(Buffer *b);
 void b_joinLine(Buffer *b);
 void b_deleteCurrentLine(Buffer *b);
