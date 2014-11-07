@@ -70,4 +70,6 @@ void buf_drawCommandLine(EditBuffer *b);
 
 void buf_centerOnCurrentLine(EditBuffer *b);
 
+char buf_charUnderCursor(EditBuffer *b);
+
 #endif

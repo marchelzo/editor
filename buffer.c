@@ -97,9 +97,10 @@ void b_cursesPrint(Buffer *b, int x, int y)
         b->line = b->line->prev;
         --b->currentLine;
     }
-    for (int i = 0; i < g_termRows; ++i) {
+    for (int i = 0; i < g_termRows - 1; ++i) {
         move(y + i, x);
-        gb_cursesPrint(b->line->content, g_cb->xScroll, g_termCols - x);
+        printw("%4d ", i + g_cb->yScroll + 1);
+        gb_cursesPrint(b->line->content, g_cb->xScroll, g_termCols - x - 4);
         if (b->line->next)
             b->line = b->line->next;
         else
@@ -165,7 +166,7 @@ void b_cursorDown(Buffer *b)
 
 void b_cursesPositionCursor(Buffer *b, int xOff, int yOff)
 {
-    move(b->currentLine + yOff - g_cb->yScroll, gb_getPosition(b->line->content) + xOff - g_cb->xScroll);
+    move(b->currentLine + yOff - g_cb->yScroll, gb_getPosition(b->line->content) + xOff - g_cb->xScroll + 5);
 }
 
 void b_goToStart(Buffer *b)
@@ -242,4 +243,70 @@ void b_deleteCurrentLine(Buffer *b)
 size_t b_columnNumber(Buffer *b)
 {
     return (size_t) gb_getPosition(b->line->content);
+}
+
+char b_charUnderCursor(Buffer *b)
+{
+    return gb_nextChar(b->line->content);
+}
+
+void b_forwardUntil(Buffer *b, char c, unsigned char lines, unsigned char atLeastOne)
+{
+    if (atLeastOne)
+        b_cursorRight(b);
+    if (lines) {
+        char cur;
+        while ((cur = b_charUnderCursor(b))) {
+            if (cur == c)
+                return;
+            b_cursorRight(b);
+            if (b->currentLine + 1 == b->numLines)
+                return;
+            if (b_columnNumber(b) + 1 == gb_length(b->line->content)) {
+                b_cursorDown(b);
+                b_goToSOL(b);
+            }
+        }
+    } else {
+        char cur;
+        while ((cur = b_charUnderCursor(b))) {
+            if (cur == c)
+                return;
+            b_cursorRight(b);
+
+        }
+    }
+}
+
+void b_backwardUntil(Buffer *b, char c, unsigned char lines, unsigned char atLeastOne)
+{
+    if (atLeastOne)
+        b_cursorLeft(b);
+    if (lines) {
+        char cur;
+        while ((cur = b_charUnderCursor(b))) {
+            if (cur == c)
+                return;
+            if (b_columnNumber(b) == 0) {
+                b_cursorUp(b);
+                b_goToEOL(b);
+            }
+            b_cursorLeft(b);
+        }
+    } else {
+        char cur;
+        while ((cur = b_charUnderCursor(b))) {
+            if (cur == c)
+                return;
+            if (b_columnNumber(b) == 0)
+                return;
+            b_cursorLeft(b);
+
+        }
+    }
+}
+
+void b_goToColumn(Buffer *b, size_t n)
+{
+    gb_forcePosition(b->line->content, n);
 }

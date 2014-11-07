@@ -155,3 +155,17 @@ void gb_moveRight(GapBuffer *b, int n)
 {
     gb_position(b, MIN(b->fsz + b->ssz, b->fsz + n));
 }
+
+char gb_prevChar(GapBuffer *gb)
+{
+    if (gb->fsz == 0)
+        return '\0';
+    else return gb->fst[gb->fsz - 1];
+}
+
+char gb_nextChar(GapBuffer *gb)
+{
+    if (gb->ssz == 0)
+        return '\0';
+    else return gb->snd[gb->ssz - 1];
+}

@@ -100,6 +100,29 @@ void normalHandler(int c)
         if (c == 'z')
             buf_centerOnCurrentLine(g_cb);
         break;
+    case 'f':
+        {
+        c = getch();
+        size_t col = buf_columnNumber(g_cb);
+        b_forwardUntil(g_cb->b, c, 0, 1);
+        if (b_charUnderCursor(g_cb->b) != c)
+            b_goToColumn(g_cb->b, col);
+        g_cb->highCol = buf_columnNumber(g_cb);
+        break;
+        }
+    case 'F':
+        {
+        c = getch();
+        size_t col = buf_columnNumber(g_cb);
+        b_backwardUntil(g_cb->b, c, 0, 1);
+        if (b_charUnderCursor(g_cb->b) != c)
+            b_goToColumn(g_cb->b, col);
+        g_cb->highCol = buf_columnNumber(g_cb);
+        break;
+        }
+    case 'W':
+        b_forwardUntil(g_cb->b, ' ', 1, 1);
+        b_cursorRight(g_cb->b);
     }
     if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))
         buf_goToLastCharOnCurrentLine(g_cb);

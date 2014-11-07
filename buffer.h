@@ -38,6 +38,10 @@ void b_goToEOL(Buffer *b);
 void b_goToSOL(Buffer *b);
 char *b_getCurrentLine(Buffer *b);
 size_t b_columnNumber(Buffer *b);
-
+char b_charUnderCursor(Buffer *b);
+void b_forwardUntil(Buffer *b, char c, unsigned char lines, unsigned char atLeastOne);
+void b_backwardUntil(Buffer *b, char c, unsigned char lines, unsigned char atLeastOne);
 int b_isEmpty(Buffer *b);
+void b_goToColumn(Buffer *b, size_t col);
+
 #endif

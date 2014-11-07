@@ -47,5 +47,8 @@ void gb_moveLeft(GapBuffer*, int n);
 
 void gb_moveRight(GapBuffer*, int n);
 
+char gb_prevChar(GapBuffer*);
+
+char gb_nextChar(GapBuffer*);
 
 #endif

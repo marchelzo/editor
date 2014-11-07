@@ -74,8 +74,8 @@ void buf_updateScrollPosition(EditBuffer *b)
     /* adjust vertical scroll if necessary */
     if (b->yScroll > b->b->currentLine)
         b->yScroll = b->b->currentLine;
-    if (b->yScroll + g_termRows <= b->b->currentLine)
-        b->yScroll = b->b->currentLine - g_termRows + 1;
+    if (b->yScroll + g_termRows <= 1 + b->b->currentLine)
+        b->yScroll = b->b->currentLine - g_termRows + 2;
 
     /* adjust horizontal scroll if necessary */
     if (b->xScroll > gb_getPosition(b->b->line->content))
@@ -219,4 +219,9 @@ void buf_centerOnCurrentLine(EditBuffer *b)
 {
     if (b->b->currentLine > g_termRows / 2)
         b->yScroll = b->b->currentLine - g_termRows / 2;
+}
+
+char buf_charUnderCursor(EditBuffer *b)
+{
+    return b_charUnderCursor(b->b);
 }

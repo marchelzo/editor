@@ -25,6 +25,19 @@ void insertHandler(int c)
     case KEY_TAB:
         b_insertString(g_cb->b, "    ");
         break;
+    case 'j':
+        halfdelay(2);
+        c = getch();
+        cbreak();
+        if (c == 'k') {
+            g_cb->mode = NORMAL;
+            b_cursorLeft(g_cb->b);
+            g_cb->handleInput = normalHandler;
+            break;
+        }
+        b_insertChar(g_cb->b, 'j');
+        g_cb->handleInput(c);
+        break;
     default:
         b_insertChar(g_cb->b, c);
     }
