@@ -6,8 +6,11 @@
 #include "quit.h"
 #include "normal.h"
 #include "bufwrite.h"
+#include "commandcompletion.h"
+#include "strdup.h"
 
 static void appendToCommand(char c);
+static void backspaceCommand(void);
 
 void commandHandler(int c)
 {
@@ -26,10 +29,22 @@ void commandHandler(int c)
             g_cb->mode = NORMAL;
             g_cb->handleInput = normalHandler;
             return;
+        case 9:
+            break;
+        case KEY_BACKSPACE:
+        case 127:
+        case 8:
+            backspaceCommand();
+            if (g_cb->mode == NORMAL)
+                return;
+            break;
         default:
             appendToCommand(c);
-            mvprintw(g_termRows - 1,0,":%s", g_command);
         }
+        move(g_termRows - 1, 0);
+        clrtoeol();
+        printw(":%s", g_command);
+        refresh();
     } while ((c = getch()));
 }
 
@@ -51,4 +66,16 @@ void runCommand(const char *com)
         buf_write(g_cb);
         return;
     }
+}
+
+static void backspaceCommand(void)
+{
+    size_t len = strlen(g_command);
+    if (len == 0) {
+        g_cb->mode = NORMAL;
+        g_cb->handleInput = normalHandler;
+        return;
+    }
+    g_command = realloc(g_command, len);
+    g_command[len - 1] = '\0';
 }

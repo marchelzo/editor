@@ -6,6 +6,8 @@
 #include "mode.h"
 #include "buffer.h"
 #include "editbuffer.h"
+#include "stringlist.h"
+#include "hashmap.h"
 
 /* current buffer global */
 extern EditBuffer *g_cb;
@@ -19,5 +21,11 @@ extern char *g_command;
 /* terminal dimensions as interpreted by ncurses */
 extern int g_termCols;
 extern int g_termRows;
+
+/* list of commands used for auto completion in command mode */
+extern StringList *g_commandList;
+
+/* hashmap that maps commands to actions */
+extern HashMap *g_commandMap;
 
 #endif

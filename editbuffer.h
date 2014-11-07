@@ -68,4 +68,6 @@ void buf_commandMode(EditBuffer *b);
 
 void buf_drawCommandLine(EditBuffer *b);
 
+void buf_centerOnCurrentLine(EditBuffer *b);
+
 #endif

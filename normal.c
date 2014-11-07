@@ -95,6 +95,11 @@ void normalHandler(int c)
         if (c == 'd')
             buf_deleteCurrentLine(g_cb);
         break;
+    case 'z':
+        c = getch();
+        if (c == 'z')
+            buf_centerOnCurrentLine(g_cb);
+        break;
     }
     if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))
         buf_goToLastCharOnCurrentLine(g_cb);

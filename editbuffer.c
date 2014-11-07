@@ -214,3 +214,9 @@ void buf_drawCommandLine(EditBuffer *b)
     g_command = calloc(1,1);
     mvaddch(g_termRows - 1, 0, ':');
 }
+
+void buf_centerOnCurrentLine(EditBuffer *b)
+{
+    if (b->b->currentLine > g_termRows / 2)
+        b->yScroll = b->b->currentLine - g_termRows / 2;
+}

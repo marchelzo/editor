@@ -7,17 +7,26 @@
 #include "insert.h"
 #include "normal.h"
 #include "editbuffer.h"
+#include "commandcompletion.h"
 
 /* globals */
 EditBuffer *g_cb;
 char *g_msg;
 char *g_command;
 int g_termRows, g_termCols;
+StringList *g_commandList;
+HashMap *g_commandMap;
 
 int main(int argc, char *argv[])
 {
     g_cb = buf_new();
     int b = buf_loadFile(g_cb, argv[1]);
+
+    compl_initializeGlobalCommandList();
+    compl_addGlobalCommand("write");
+    compl_addGlobalCommand("wait");
+    compl_addGlobalCommand("windowNew");
+    compl_addGlobalCommand("windowNewVeryLongCommandName");
 
     g_command = malloc(1);
     g_command[0] = '\0';

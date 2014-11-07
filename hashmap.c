@@ -1,4 +1,5 @@
 #include "hashmap.h"
+#include "strdup.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -33,7 +34,7 @@ void hm_insert(HashMap *m, const char* key, void (*value)(void))
     } else {
         /* walk through the link list to find the next available spots, checking for duplicate entries along the way */
         Node *n = m->buckets[bucket].head;
-        /* hang on the the previous node as well, because if the key does not exist and we end at NULL, we still
+        /* hang on to the previous node as well, because if the key does not exist and we end at NULL, we still
          * need a way to reference the last allod'c node
          */
         Node *prev = NULL;
@@ -74,6 +75,11 @@ fp hm_lookup(HashMap *m, const char *key)
             n = n->next;
     }
     return NULL;
+}
+
+unsigned char hm_contains(HashMap *m, const char *key)
+{
+    return hm_lookup(m, key) != NULL;
 }
 
 static size_t hash(const unsigned char *str)
