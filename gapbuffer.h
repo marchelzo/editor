@@ -51,4 +51,6 @@ char gb_prevChar(GapBuffer*);
 
 char gb_nextChar(GapBuffer*);
 
+void gb_deleteUntilEOL(GapBuffer*);
+
 #endif

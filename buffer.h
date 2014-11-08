@@ -45,8 +45,14 @@ void b_backwardUntil(Buffer *b, char c, unsigned char lines, unsigned char atLea
 int b_isEmpty(Buffer *b);
 void b_goToColumn(Buffer *b, size_t col);
 void b_forwardWord(Buffer *b);
+void b_deleteUntilEOL(Buffer *b);
 unsigned char b_isAtEOL(Buffer *b);
 unsigned char b_isAtEOF(Buffer *b);
 unsigned char b_isOnLastLine(Buffer *b);
+void b_goToLine(Buffer *b, size_t line);
+void b_moveDown(Buffer *b, size_t n);
+void b_moveUp(Buffer *b, size_t n);
+void b_goToFirstNonWhitespaceCharOnLine(Buffer *b);
+void b_forwardUntilNoneOf(Buffer *b, char *chs);
 
 #endif

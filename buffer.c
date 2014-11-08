@@ -7,6 +7,14 @@
 #include "loadfile.h"
 #include "state.h"
 
+static unsigned char contains(char *haystack, char needle)
+{
+    while (*haystack)
+        if (*haystack++ == needle)
+            return 1;
+    return 0;
+}
+
 static void reverseBytes(void *start, int size) {
     if (size == 0) return;
     unsigned char *lo = start;
@@ -376,4 +384,58 @@ unsigned char b_isAtEOF(Buffer *b)
 unsigned char b_isOnLastLine(Buffer *b)
 {
     return b->numLines == b->currentLine + 1;
+}
+
+void b_deleteUntilEOL(Buffer *b)
+{
+    gb_deleteUntilEOL(b->line->content);
+}
+
+void b_goToLine(Buffer *b, size_t line)
+{
+    if (line > b->currentLine) {
+        while (b->currentLine < line && b->currentLine < b->numLines) {
+            b_cursorDown(b);
+        }
+    } else {
+        while (b->currentLine > line && b->currentLine > 0) {
+            b_cursorUp(b);
+        }
+    }
+}
+
+void b_moveUp(Buffer *b, size_t n)
+{
+    size_t i = 0;
+    while (b->currentLine > 0 && i < n) {
+        b_cursorUp(b);
+        ++i;
+    }
+}
+
+void b_moveDown(Buffer *b, size_t n)
+{
+    size_t i = 0;
+    while (b->currentLine < b->numLines && i < n) {
+        b_cursorDown(b);
+        ++i;
+    }
+}
+
+void b_goToFirstNonWhitespaceCharOnLine(Buffer *b)
+{
+    b_goToSOL(b);
+    b_forwardUntilNoneOf(b, " ");
+}
+
+void b_forwardUntilNoneOf(Buffer *b, char *chs)
+{
+    char current;
+    while ((current = b_charUnderCursor(b))) {
+        if (contains(chs, current))
+            b_cursorRight(b);
+        else
+            return;
+    }
+    
 }

@@ -169,3 +169,9 @@ char gb_nextChar(GapBuffer *gb)
         return '\0';
     else return gb->snd[gb->ssz - 1];
 }
+
+void gb_deleteUntilEOL(GapBuffer *gb)
+{
+    gb->ssz = 0;
+    gb->snd = malloc(1);
+}

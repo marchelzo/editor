@@ -120,6 +120,31 @@ void normalHandler(int c)
         }
     case 'W':
         b_forwardWord(g_cb->b);
+        g_cb->highCol = buf_columnNumber(g_cb);
+        break;
+    case '0':
+        b_goToSOL(g_cb->b);
+        g_cb->highCol = buf_columnNumber(g_cb);
+        break;
+    case 'D':
+        b_deleteUntilEOL(g_cb->b);
+        b_cursorLeft(g_cb->b);
+        g_cb->highCol = buf_columnNumber(g_cb);
+        break;
+    case 4:
+        b_moveDown(g_cb->b, g_termRows / 2);
+        b_goToFirstNonWhitespaceCharOnLine(g_cb->b);
+        g_cb->highCol = buf_columnNumber(g_cb);
+        break;
+    case 21:
+        b_moveUp(g_cb->b, g_termRows / 2);
+        b_goToFirstNonWhitespaceCharOnLine(g_cb->b);
+        g_cb->highCol = buf_columnNumber(g_cb);
+        break;
+    case '^':
+        b_goToFirstNonWhitespaceCharOnLine(g_cb->b);
+        g_cb->highCol = buf_columnNumber(g_cb);
+        break;
     }
     if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))
         buf_goToLastCharOnCurrentLine(g_cb);
