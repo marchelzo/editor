@@ -24,15 +24,17 @@ void insertHandler(int c)
         b_insertSpaces(g_cb->b, g_cb->conf->sw);
         break;
     case 'j':
-        halfdelay(2);
+        halfdelay(10);
         c = getch();
+        nocbreak(); /* apparently this is necessary when using pdcurses (windows) ? */
         cbreak();
         if (c == 'k') {
             buf_normalMode(g_cb);
             break;
         }
         b_insertChar(g_cb->b, 'j');
-        g_cb->handleInput(c);
+        if (c != ERR)
+            g_cb->handleInput(c);
         break;
     default:
         b_insertChar(g_cb->b, c);

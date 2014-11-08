@@ -34,7 +34,7 @@ Buffer *b_fromFile(FILE *fp)
 {
     Buffer *b = b_new();
     LoadedFile *f = loadFile(fp);
-    if (f->numLines == 0 && f->lines[0] == NULL)
+    if (f->numLines == 0)
         return b;
     b->numLines = f->numLines;
     for (int i = 0; i < f->numLines; ++i) {
@@ -325,6 +325,16 @@ void b_insertSpaces(Buffer *b, unsigned char n)
 
 void b_forwardWord(Buffer *b)
 {
+    if (b_isAtEOL(b)) {
+        if (b_isOnLastLine(b)) {
+            b_goToEOL(b);
+            return;
+        } else {
+            b_cursorDown(b);
+            b_goToSOL(b);
+            return;
+        }
+    }
     char current = b_charUnderCursor(b);
     while (current != ' ') {
         if (b_isAtEOF(b))
@@ -360,5 +370,10 @@ unsigned char b_isAtEOL(Buffer *b)
 
 unsigned char b_isAtEOF(Buffer *b)
 {
-    return b->currentLine + 1 == b->numLines && b_isAtEOL(b);
+    return b_isOnLastLine(b) && b_isAtEOL(b);
+}
+
+unsigned char b_isOnLastLine(Buffer *b)
+{
+    return b->numLines == b->currentLine + 1;
 }

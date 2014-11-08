@@ -47,5 +47,6 @@ void b_goToColumn(Buffer *b, size_t col);
 void b_forwardWord(Buffer *b);
 unsigned char b_isAtEOL(Buffer *b);
 unsigned char b_isAtEOF(Buffer *b);
+unsigned char b_isOnLastLine(Buffer *b);
 
 #endif
