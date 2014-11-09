@@ -32,7 +32,7 @@ void hm_insert(HashMap *m, const char* key, void (*value)(void))
         ++m->nonEmptyBuckets;
         ++m->numItems;
     } else {
-        /* walk through the link list to find the next available spots, checking for duplicate entries along the way */
+        /* walk through the linked list to find the next available spots, checking for duplicate entries along the way */
         Node *n = m->buckets[bucket].head;
         /* hang on to the previous node as well, because if the key does not exist and we end at NULL, we still
          * need a way to reference the last allod'c node
