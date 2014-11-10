@@ -14,6 +14,9 @@ void insertHandler(int c)
         break;
     case 13:
         b_insertChar(g_cb->b, '\n');
+        if (g_cb->conf->autoIndent) {
+            b_insertSpaces(g_cb->b, b_getPrevLineIndent(g_cb->b));
+        }
         break;
     case KEY_BACKSPACE:
     case 127:

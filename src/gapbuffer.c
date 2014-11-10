@@ -175,3 +175,20 @@ void gb_deleteUntilEOL(GapBuffer *gb)
     gb->ssz = 0;
     gb->snd = malloc(1);
 }
+
+unsigned char gb_leadingSpaces(GapBuffer *gb)
+{
+    unsigned char indent = 0;
+    for (size_t i = 0; i < gb->fsz; ++i) {
+        if (gb->fst[i] != ' ')
+            return indent;
+        ++indent;
+    }
+
+    for (size_t i = 0; i < gb->ssz; ++i) {
+        if (gb->snd[i] != ' ')
+            return indent;
+        ++indent;
+    }
+    return indent;
+}

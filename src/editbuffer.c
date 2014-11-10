@@ -31,6 +31,8 @@ EditBuffer *buf_new(void)
     /* set highCol to 0 so that the cursor stays in the first column if we scroll down */
     b->highCol = 0;
 
+    b->currentIndent = 0;
+
     return b;
 }
 
@@ -198,6 +200,7 @@ size_t buf_columnNumber(EditBuffer *b)
 int buf_goToColumn(EditBuffer *b, int n)
 {
     gb_forcePosition(b->b->line->content, n);
+    return gb_getPosition(b->b->line->content) == n;
 }
 
 void buf_commandMode(EditBuffer *b)
@@ -209,6 +212,7 @@ void buf_commandMode(EditBuffer *b)
     b->handleInput(c);
 }
 
+//TODO make this actually print the command and not just a colon
 void buf_drawCommandLine(EditBuffer *b)
 {
     g_command = calloc(1,1);

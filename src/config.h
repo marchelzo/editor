@@ -4,6 +4,7 @@
 typedef struct {
     unsigned char sw;
     unsigned char lineNumbers;
+    unsigned char autoIndent;
 } Config;
 
 #endif

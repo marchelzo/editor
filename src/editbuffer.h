@@ -13,6 +13,7 @@ typedef struct {
     int highCol;
     int xScroll;
     int yScroll;
+    int currentIndent;
     char *fileName;
 } EditBuffer;
 

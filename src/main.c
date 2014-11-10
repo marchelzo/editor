@@ -22,7 +22,8 @@ int main(int argc, char *argv[])
     g_cb = buf_new();
     g_cb->conf->lineNumbers = 1;
     g_cb->conf->sw = 4;
-    int b = buf_loadFile(g_cb, argv[1]);
+    g_cb->conf->autoIndent = 1;
+    buf_loadFile(g_cb, argv[1]);
 
     compl_initializeGlobalCommandList();
     compl_addGlobalCommand("write");

@@ -441,3 +441,10 @@ void b_forwardUntilNoneOf(Buffer *b, char *chs)
     }
     
 }
+
+unsigned char b_getPrevLineIndent(Buffer *b)
+{
+    if (!(b->line->prev))
+        return 0;
+    return gb_leadingSpaces(b->line->prev->content);
+}
