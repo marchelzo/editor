@@ -39,19 +39,24 @@ int main(int argc, char *argv[])
     cbreak();
     nonl();
     noecho();
+    start_color();
+    use_default_colors();
+
+    /* initialize some color pairs */
+    init_pair(1, COLOR_YELLOW, -1); /*  on default bg */
 
     /* get the terminal dimensions */
     getmaxyx(stdscr, g_termRows, g_termCols);
 
     int c;
-    b_cursesPrint(g_cb->b, 0, 0);
+    b_cursesDraw(g_cb->b, 0, 0);
     b_cursesPositionCursor(g_cb->b, 0, 0);
     while (1) {
         c = getch();
         g_cb->handleInput(c);
         clear();
         buf_updateScrollPosition(g_cb);
-        b_cursesPrint(g_cb->b, 0, 0);
+        b_cursesDraw(g_cb->b, 0, 0);
         b_cursesPositionCursor(g_cb->b, 0, 0);
         refresh();
     }

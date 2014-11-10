@@ -26,7 +26,7 @@ void b_insertSpaces(Buffer *b, unsigned char n);
 void b_backspace(Buffer *b);
 void b_joinLine(Buffer *b);
 void b_deleteCurrentLine(Buffer *b);
-void b_cursesPrint(Buffer *b, int xOff, int yOff);
+void b_cursesDraw(Buffer *b, int xOff, int yOff);
 void b_cursesPositionCursor(Buffer *b, int xOff, int yOff);
 void b_cursorRight(Buffer *b);
 void b_cursorLeft(Buffer *b);

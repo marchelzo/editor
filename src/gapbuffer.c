@@ -114,7 +114,7 @@ char *gb_cString(GapBuffer *gb)
     return gb_substring(gb, 0, gb_length(gb));
 }
 
-void gb_cursesPrint(GapBuffer *b, int start, int max)
+void gb_cursesDraw(GapBuffer *b, int start, int max)
 {
     int printed = 0;
     for (int i = start; i < b->fsz && printed < max; ++i) {

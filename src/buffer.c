@@ -95,7 +95,7 @@ void b_insertString(Buffer *b, const char *s)
     gb_insertString(b->line->content, s);
 }
 
-void b_cursesPrint(Buffer *b, int x, int y)
+void b_cursesDraw(Buffer *b, int x, int y)
 {
     LineNode *c = b->line;
     size_t currentLine = b->currentLine;
@@ -107,13 +107,15 @@ void b_cursesPrint(Buffer *b, int x, int y)
         move(y + i, x);
 
         /* DRAW LINE NUMBERS IF THEY ARE ENABLED */
+        attron(COLOR_PAIR(1));
         if (g_cb->conf->lineNumbers) {
             printw("%4d ", i + g_cb->yScroll + 1);
         }
+        attroff(COLOR_PAIR(1));
 
         int colOffSet = (g_cb->conf->lineNumbers) ? 5 : 0;
 
-        gb_cursesPrint(b->line->content, g_cb->xScroll, g_termCols - x - colOffSet);
+        gb_cursesDraw(b->line->content, g_cb->xScroll, g_termCols - x - colOffSet);
         if (b->line->next)
             b->line = b->line->next;
         else
