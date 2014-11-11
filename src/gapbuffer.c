@@ -185,8 +185,8 @@ unsigned char gb_leadingSpaces(GapBuffer *gb)
         ++indent;
     }
 
-    for (size_t i = 0; i < gb->ssz; ++i) {
-        if (gb->snd[i] != ' ')
+    for (size_t i = gb->ssz; i > 0; --i) {
+        if (gb->snd[i - 1] != ' ')
             return indent;
         ++indent;
     }

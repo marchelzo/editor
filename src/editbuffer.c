@@ -97,6 +97,8 @@ void buf_newLineBelow(EditBuffer *b)
 {
     buf_goToEOL(b);
     b_insertChar(b->b, '\n');
+    if (b->conf->autoIndent)
+        b_sameIndentAsAbove(b->b);
 
 }
 
@@ -105,6 +107,8 @@ void buf_newLineAbove(EditBuffer *b)
     buf_goToSOL(b);
     b_insertChar(b->b, '\n');
     buf_prevLine(b, 1);
+    if (b->conf->autoIndent)
+        b_sameIndentAsBelow(b->b);
 }
 
 void buf_goToEOL(EditBuffer *b)

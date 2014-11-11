@@ -55,6 +55,8 @@ void b_moveUp(Buffer *b, size_t n);
 void b_goToFirstNonWhitespaceCharOnLine(Buffer *b);
 void b_forwardUntilNoneOf(Buffer *b, char *chs);
 unsigned char b_getPrevLineIndent(Buffer *b);
+void b_sameIndentAsAbove(Buffer *b);
+void b_sameIndentAsBelow(Buffer *b);
 
 
 #endif

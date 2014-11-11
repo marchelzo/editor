@@ -448,3 +448,20 @@ unsigned char b_getPrevLineIndent(Buffer *b)
         return 0;
     return gb_leadingSpaces(b->line->prev->content);
 }
+
+unsigned char b_getNextLineIndent(Buffer *b)
+{
+    if (!(b->line->next))
+        return 0;
+    return gb_leadingSpaces(b->line->next->content);
+}
+
+void b_sameIndentAsAbove(Buffer *b)
+{
+    b_insertSpaces(b, b_getPrevLineIndent(b));
+}
+
+void b_sameIndentAsBelow(Buffer *b)
+{
+    b_insertSpaces(b, b_getNextLineIndent(b));
+}
