@@ -1,9 +1,12 @@
 #include <stdlib.h>
+#include "command.h"
+
+typedef void (*CommandAction)(int, char**);
 
 typedef struct node_t {
     char *key;
     struct node_t *next;
-    void (*action)(void);
+    CommandAction action;
 } Node;
 
 typedef struct {
@@ -17,10 +20,9 @@ typedef struct {
     size_t numItems;
 } HashMap;
 
-typedef void (*fp)(void);
 
 HashMap *hm_new(size_t numBuckets);
 
-fp hm_lookup(HashMap *m, const char *key);
+CommandAction hm_lookup(HashMap *m, const char *key);
 
-void hm_insert(HashMap *m, const char *key, fp value);
+void hm_insert(HashMap *m, const char *key, CommandAction value);

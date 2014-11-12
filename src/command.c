@@ -14,7 +14,7 @@ static void backspaceCommand(void);
 
 void commandHandler(int c)
 {
-    refresh();
+    refresh(); /* make sure that the ':' is drawn at the bottom of the screen */
     do {
         switch (c) {
         case 27:
@@ -56,24 +56,17 @@ static void appendToCommand(char c)
     g_command[len + 1] = '\0';
 }
 
-void runCommand(const char *com)
+void runCommand(char *com)
 {
-    if (strcmp(com, "q") == 0) {
-        g_edit_quit();
-        return;
-    }
-    if (strcmp(com, "w") == 0) {
-        buf_write(g_cb);
-        return;
-    }
-    if (strcmp(com, "set autoindent") == 0) {
-        g_cb->conf->autoIndent = 1;
-        return;
-    }
-    if (strcmp(com, "set noautoindent") == 0) {
-        g_cb->conf->autoIndent = 0;
-        return;
-    }
+    Command *c = parseCommand(com);
+    if (c == NULL)
+        return; /* TODO INVALID INPUT -- COULD NOT PARSE */
+    CommandAction a = hm_lookup(g_commandMap, c->command);
+    if (a == NULL)
+        return; /* TODO INVALID COMMAND */
+
+    /* run the command with the arguments parsed */
+    a(c->argc, c->argv);
 }
 
 static void backspaceCommand(void)
@@ -86,4 +79,51 @@ static void backspaceCommand(void)
     }
     g_command = realloc(g_command, len);
     g_command[len - 1] = '\0';
+}
+
+Command* parseCommand(char *str)
+{
+    Command *c = malloc(sizeof(*c));
+    if (c == NULL)
+        return NULL;
+    c->argc = 0;
+    size_t argsAllocd = 0;
+    size_t commandLen = 0;
+    c->argv = NULL;
+    c->command = NULL;
+    while (*str != ' ') {
+        if (str[0] == '\0')
+            break;
+        c->command = realloc(c->command, commandLen + 1);
+        if (c->command == NULL)
+            return NULL;
+        c->command[commandLen] = str[0];
+        ++commandLen;
+        ++str;
+    }
+    c->command = realloc(c->command, commandLen + 1);
+    c->command[commandLen] = '\0';
+    ++str;
+    if (str[0] == '\0')
+        return c;
+    while (*str != '\0') {
+        size_t argLen = 0;
+        c->argv = realloc(c->argv, (c->argc + 1) * sizeof(char*));
+        c->argv[c->argc] = NULL;
+        while (*str != ' ') {
+            if (*str == '\0')
+                break;
+            c->argv[c->argc] = realloc(c->argv[c->argc], argLen + 1);
+            c->argv[c->argc][argLen] = str[0];
+            ++argLen;
+            ++str;
+        }
+        c->argv[c->argc] = realloc(c->argv[c->argc], argLen + 1);
+        c->argv[c->argc][argLen] = '\0';
+        ++c->argc;
+        if (*str == '\0')
+            break;
+        ++str;
+    }
+    return c;
 }

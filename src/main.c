@@ -8,6 +8,8 @@
 #include "normal.h"
 #include "editbuffer.h"
 #include "commandcompletion.h"
+#include "quit.h"
+#include "bufwrite.h"
 
 /* globals */
 EditBuffer *g_cb;
@@ -17,6 +19,16 @@ int g_termRows, g_termCols;
 StringList *g_commandList;
 HashMap *g_commandMap;
 
+static void quit(int argc, char **argv)
+{
+    g_edit_quit();
+}
+
+static void bufwrite(int argc, char **argv)
+{
+    buf_write(g_cb);
+}
+
 int main(int argc, char *argv[])
 {
     g_cb = buf_new();
@@ -25,11 +37,14 @@ int main(int argc, char *argv[])
     g_cb->conf->autoIndent = 1;
     buf_loadFile(g_cb, argv[1]);
 
-    compl_initializeGlobalCommandList();
-    compl_addGlobalCommand("write");
-    compl_addGlobalCommand("wait");
-    compl_addGlobalCommand("windowNew");
-    compl_addGlobalCommand("windowNewVeryLongCommandName");
+    /* compl_initializeGlobalCommandList(); */
+    /* compl_addGlobalCommand("write"); */
+    /* compl_addGlobalCommand("wait"); */
+    /* compl_addGlobalCommand("windowNew"); */
+    /* compl_addGlobalCommand("windowNewVeryLongCommandName"); */
+    g_commandMap = hm_new(100);
+    hm_insert(g_commandMap, "q", quit);
+    hm_insert(g_commandMap, "w", bufwrite);
 
     g_command = malloc(1);
     g_command[0] = '\0';

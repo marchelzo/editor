@@ -4,9 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static size_t hash(const unsigned char *str);
-
-typedef void (*fp)(void);
+static size_t hash(const char *str);
 
 HashMap *hm_new(size_t size)
 {
@@ -20,7 +18,7 @@ HashMap *hm_new(size_t size)
     return m;
 }
 
-void hm_insert(HashMap *m, const char* key, void (*value)(void))
+void hm_insert(HashMap *m, const char* key, CommandAction value)
 {
     size_t bucket = hash(key) % m->numBuckets;
     if (m->buckets[bucket].head == NULL) {
@@ -64,7 +62,7 @@ void hm_insert(HashMap *m, const char* key, void (*value)(void))
     }
 }
 
-fp hm_lookup(HashMap *m, const char *key)
+CommandAction hm_lookup(HashMap *m, const char *key)
 {
     size_t bucket = hash(key) % m->numBuckets;
     Node *n = m->buckets[bucket].head;
@@ -82,12 +80,12 @@ unsigned char hm_contains(HashMap *m, const char *key)
     return hm_lookup(m, key) != NULL;
 }
 
-static size_t hash(const unsigned char *str)
+static size_t hash(const char *str)
 {
     size_t hash = 5381;
     int c;
 
-    while (c = *str++)
+    while ((c = *str++))
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
     return hash;
