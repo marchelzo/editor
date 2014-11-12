@@ -5,6 +5,7 @@
 #include "quit.h"
 #include "gapbuffer.h"
 #include "command.h"
+#include "mode.h"
 
 #define KEY_MOVE_LEFT  'h'
 #define KEY_MOVE_RIGHT 'l'
@@ -153,4 +154,24 @@ void normalHandler(int c)
     }
     if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))
         buf_goToLastCharOnCurrentLine(g_cb);
+}
+
+/* evaluates the given string by handling each character as if
+ * it were pressed in normal mode.
+ * Returns the global buffer to it's original mode after evaluting the normal
+ * mode string
+ */
+void normalModeEval(const char *s)
+{
+    EditorMode m = g_cb->mode;
+
+    g_cb->mode = NORMAL;
+    g_cb->handleInput = normalHandler;
+
+    while (*s) {
+        g_cb->handleInput(*s);
+        ++s;
+    }
+
+    buf_setMode(g_cb, m);
 }

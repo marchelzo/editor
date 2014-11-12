@@ -29,6 +29,13 @@ static void bufwrite(int argc, char **argv)
     buf_write(g_cb);
 }
 
+static void normalEvalHandler(int argc, char **argv)
+{
+    if (argc == 1) {
+        normalModeEval(argv[0]);
+    }
+}
+
 int main(int argc, char *argv[])
 {
     g_cb = buf_new();
@@ -45,6 +52,7 @@ int main(int argc, char *argv[])
     g_commandMap = hm_new(100);
     hm_insert(g_commandMap, "q", quit);
     hm_insert(g_commandMap, "w", bufwrite);
+    hm_insert(g_commandMap, "normal", normalEvalHandler);
 
     g_command = malloc(1);
     g_command[0] = '\0';
