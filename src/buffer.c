@@ -342,7 +342,6 @@ void b_forwardWord(Buffer *b)
         } else {
             b_cursorDown(b);
             b_goToSOL(b);
-            return;
         }
     }
     char current = b_charUnderCursor(b);
@@ -456,6 +455,13 @@ unsigned char b_getNextLineIndent(Buffer *b)
     return gb_leadingSpaces(b->line->next->content);
 }
 
+unsigned char b_getCurrentLineIndent(Buffer *b)
+{
+    if (!(b->line))
+        return 0;
+    return gb_leadingSpaces(b->line->content);
+}
+
 void b_sameIndentAsAbove(Buffer *b)
 {
     b_insertSpaces(b, b_getPrevLineIndent(b));
@@ -464,4 +470,12 @@ void b_sameIndentAsAbove(Buffer *b)
 void b_sameIndentAsBelow(Buffer *b)
 {
     b_insertSpaces(b, b_getNextLineIndent(b));
+}
+
+void b_clearCurrentLine(Buffer *b)
+{
+    if (b->line && b->line->content) {
+        gb_free(b->line->content);
+        b->line->content = gb_new();
+    }
 }

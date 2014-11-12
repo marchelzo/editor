@@ -145,6 +145,11 @@ void normalHandler(int c)
         b_goToFirstNonWhitespaceCharOnLine(g_cb->b);
         g_cb->highCol = buf_columnNumber(g_cb);
         break;
+    case 'S':
+        buf_S(g_cb);
+        g_cb->mode = INSERT;
+        g_cb->handleInput = insertHandler;
+        break;
     }
     if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))
         buf_goToLastCharOnCurrentLine(g_cb);

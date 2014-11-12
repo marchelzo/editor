@@ -66,6 +66,14 @@ void runCommand(const char *com)
         buf_write(g_cb);
         return;
     }
+    if (strcmp(com, "set autoindent") == 0) {
+        g_cb->conf->autoIndent = 1;
+        return;
+    }
+    if (strcmp(com, "set noautoindent") == 0) {
+        g_cb->conf->autoIndent = 0;
+        return;
+    }
 }
 
 static void backspaceCommand(void)

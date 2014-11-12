@@ -241,3 +241,10 @@ void buf_normalMode(EditBuffer *b)
     b_cursorLeft(b->b);
     b->highCol = gb_getPosition(b->b->line->content);
 }
+
+void buf_S(EditBuffer *b)
+{
+    unsigned char indent = b->conf->autoIndent ? b_getCurrentLineIndent(b->b) : 0;
+    b_clearCurrentLine(b->b);
+    b_insertSpaces(b->b, indent);
+}
