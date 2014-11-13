@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "normal.h"
 #include "buffer.h"
 #include "state.h"
@@ -22,6 +24,8 @@
 #define KEY_INSERT_SOL 'I'
 
 #define KEY_COM_MODE   ';'
+
+static size_t charsConsumed;
 
 void normalHandler(int c)
 {
@@ -80,6 +84,7 @@ void normalHandler(int c)
         break;
     case 'g':
         c = getch();
+        ++charsConsumed;
         if (c == 'g') {
             buf_goToFirstLine(g_cb);
             buf_goToSOL(g_cb);
@@ -91,17 +96,20 @@ void normalHandler(int c)
         break;
     case 'd':
         c = getch();
+        ++charsConsumed;
         if (c == 'd')
             buf_deleteCurrentLine(g_cb);
         break;
     case 'z':
         c = getch();
+        ++charsConsumed;
         if (c == 'z')
             buf_centerOnCurrentLine(g_cb);
         break;
     case 'f':
         {
         c = getch();
+        ++charsConsumed;
         size_t col = buf_columnNumber(g_cb);
         b_forwardUntil(g_cb->b, c, 0, 1);
         if (b_charUnderCursor(g_cb->b) != c)
@@ -112,6 +120,7 @@ void normalHandler(int c)
     case 'F':
         {
         c = getch();
+        ++charsConsumed;
         size_t col = buf_columnNumber(g_cb);
         b_backwardUntil(g_cb->b, c, 0, 1);
         if (b_charUnderCursor(g_cb->b) != c)
@@ -156,6 +165,7 @@ void normalHandler(int c)
         buf_goToLastCharOnCurrentLine(g_cb);
 }
 
+
 /* evaluates the given string by handling each character as if
  * it were pressed in normal mode.
  * Returns the global buffer to it's original mode after evaluting the normal
@@ -168,10 +178,21 @@ void normalModeEval(const char *s)
     g_cb->mode = NORMAL;
     g_cb->handleInput = normalHandler;
 
-    while (*s) {
-        g_cb->handleInput(*s);
-        ++s;
+    charsConsumed = 0;
+
+    size_t len = strlen(s);
+
+    for (size_t i = len; i > 0; --i)
+        ungetch(s[i - 1]);
+
+    nodelay(stdscr, TRUE);
+
+    while (charsConsumed != len) {
+        normalHandler(getch());
+        ++charsConsumed;
     }
+
+    nodelay(stdscr, FALSE);
 
     buf_setMode(g_cb, m);
 }
