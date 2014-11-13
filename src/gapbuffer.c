@@ -11,6 +11,7 @@ GapBuffer *gb_new(void)
     gb->snd = malloc(1);
     gb->fsz = 0;
     gb->ssz = 0;
+    return gb;
 }
 
 GapBuffer *gb_fromCString(char *s, size_t n)
@@ -18,6 +19,7 @@ GapBuffer *gb_fromCString(char *s, size_t n)
     GapBuffer *b = gb_new();
     b->ssz = (size_t) n;
     b->snd = s;
+    return b;
 }
 
 void gb_position(GapBuffer *gb, int p)

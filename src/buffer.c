@@ -36,6 +36,7 @@ Buffer *b_new()
     b->line->next = NULL;
     b->numLines = 1;
     b->currentLine = 0;
+    return b;
 }
 
 Buffer *b_fromFile(FILE *fp)
