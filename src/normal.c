@@ -165,15 +165,8 @@ void normalHandler(int c)
         buf_goToLastCharOnCurrentLine(g_cb);
 }
 
-
-/* evaluates the given string by handling each character as if
- * it were pressed in normal mode.
- * Returns the global buffer to it's original mode after evaluting the normal
- * mode string
- */
 void normalModeEval(const char *s)
 {
-    EditorMode m = g_cb->mode;
 
     g_cb->mode = NORMAL;
     g_cb->handleInput = normalHandler;
@@ -188,11 +181,10 @@ void normalModeEval(const char *s)
     nodelay(stdscr, TRUE);
 
     while (charsConsumed != len) {
-        normalHandler(getch());
+        g_cb->handleInput(getch());
         ++charsConsumed;
     }
 
     nodelay(stdscr, FALSE);
 
-    buf_setMode(g_cb, m);
 }

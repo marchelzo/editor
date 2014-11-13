@@ -26,8 +26,13 @@ void commandHandler(int c)
         case 13:
             runCommand(g_command);
             free(g_command);
-            g_cb->mode = NORMAL;
-            g_cb->handleInput = normalHandler;
+
+            /* if the command left us in command mode, then go to normal mode */
+            if (g_cb->mode == COMMAND) {
+                g_cb->mode = NORMAL;
+                g_cb->handleInput = normalHandler;
+            }
+
             return;
         case 9:
             break;
