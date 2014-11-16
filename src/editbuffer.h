@@ -13,8 +13,9 @@ typedef struct {
     int highCol;
     int xScroll;
     int yScroll;
-    int currentIndent;
+    int currentIndent; /* is this doing anything? */
     char *fileName;
+    int handle;
 } EditBuffer;
 
 EditBuffer *buf_new(void);

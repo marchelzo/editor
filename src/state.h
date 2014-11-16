@@ -12,6 +12,12 @@
 /* current buffer global */
 extern EditBuffer *g_cb;
 
+/* current buffer list */
+extern EditBuffer **g_bufList;
+
+/* the number of EditBuffers currently in g_bufList */
+extern int g_numBuffers;
+
 /* global message for debugging */
 extern char *g_msg;
 

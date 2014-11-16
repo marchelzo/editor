@@ -31,6 +31,13 @@ EditBuffer *buf_new(void)
     /* set highCol to 0 so that the cursor stays in the first column if we scroll down */
     b->highCol = 0;
 
+    /* set the edit buffer's handle based on the number of buffers already open */
+    b->handle = g_numBuffers++;
+
+    /* add the new EditBuffer to the global list of EditBuffers */
+    g_bufList = realloc(g_bufList, g_numBuffers);
+    g_bufList[g_numBuffers - 1] = b;
+
     b->currentIndent = 0;
 
     return b;
@@ -227,6 +234,8 @@ void buf_centerOnCurrentLine(EditBuffer *b)
 {
     if (b->b->currentLine > g_termRows / 2)
         b->yScroll = b->b->currentLine - g_termRows / 2;
+    else
+        b->yScroll = 0;
 }
 
 char buf_charUnderCursor(EditBuffer *b)

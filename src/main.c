@@ -12,12 +12,14 @@
 #include "bufwrite.h"
 
 /* globals */
-EditBuffer *g_cb;
-char *g_msg;
-char *g_command;
+EditBuffer *g_cb = NULL;
+EditBuffer **g_bufList = NULL;
+int g_numBuffers;
+char *g_msg = NULL;
+char *g_command = NULL;
 int g_termRows, g_termCols;
-StringList *g_commandList;
-HashMap *g_commandMap;
+StringList *g_commandList = NULL;
+HashMap *g_commandMap = NULL;
 
 static void quit(int argc, char **argv)
 {
@@ -36,8 +38,36 @@ static void normalEvalHandler(int argc, char **argv)
     }
 }
 
+static void bufedit(int argc, char **argv)
+{
+    if (argc != 1)
+        return;
+    EditBuffer *b = buf_new();
+    buf_loadFile(b, argv[0]);
+    g_cb = b;
+}
+
+static void bufnext(int argc, char **argv)
+{
+    if (argc)
+        return;
+    if (g_cb->handle + 1 == g_numBuffers)
+        return;
+    g_cb = g_bufList[g_cb->handle + 1];
+}
+
+static void bufprev(int argc, char **argv)
+{
+    if (argc)
+        return;
+    if (g_cb->handle == 0)
+        return;
+    g_cb = g_bufList[g_cb->handle - 1];
+}
+
 int main(int argc, char *argv[])
 {
+    g_numBuffers = 0;
     g_cb = buf_new();
     g_cb->conf->lineNumbers = 1;
     g_cb->conf->sw = 4;
@@ -53,6 +83,9 @@ int main(int argc, char *argv[])
     hm_insert(g_commandMap, "q", quit);
     hm_insert(g_commandMap, "w", bufwrite);
     hm_insert(g_commandMap, "normal", normalEvalHandler);
+    hm_insert(g_commandMap, "e", bufedit);
+    hm_insert(g_commandMap, "bnext", bufnext);
+    hm_insert(g_commandMap, "bprev", bufprev);
 
     g_command = malloc(1);
     g_command[0] = '\0';

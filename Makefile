@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -Wall -std=c11 -O3
+CFLAGS = -g -Wall -std=c11 -O0
 SOURCES := $(wildcard src/*.c)
 OBJECTS := $(patsubst %.c,%.o,${SOURCES})
 

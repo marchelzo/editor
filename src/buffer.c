@@ -334,6 +334,7 @@ void b_insertSpaces(Buffer *b, unsigned char n)
         b_insertChar(b, ' ');
 }
 
+/* disgusting function to replicate vim's W motion */
 void b_forwardWord(Buffer *b)
 {
     if (b_isAtEOL(b)) {
@@ -343,6 +344,8 @@ void b_forwardWord(Buffer *b)
         } else {
             b_cursorDown(b);
             b_goToSOL(b);
+            if (b_charUnderCursor(b) != ' ')
+                return;
         }
     }
     char current = b_charUnderCursor(b);
@@ -352,7 +355,7 @@ void b_forwardWord(Buffer *b)
         if (b_isAtEOL(b)) {
             b_cursorDown(b);
             b_goToSOL(b);
-            if (b_isAtEOL(b))
+            if (b_isAtEOL(b) || b_charUnderCursor(b) != ' ')
                 return;
         } else {
             b_cursorRight(b);
