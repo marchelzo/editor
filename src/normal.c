@@ -14,6 +14,9 @@
 #define KEY_MOVE_UP    'k'
 #define KEY_MOVE_DOWN  'j'
 
+#define C_RIGHT        555
+#define C_LEFT         540
+
 #define KEY_INSERT     'i'
 #define KEY_APPEND     'a'
 
@@ -159,6 +162,13 @@ void normalHandler(int c)
         buf_S(g_cb);
         g_cb->mode = INSERT;
         g_cb->handleInput = insertHandler;
+        break;
+    case C_RIGHT:
+        /* TODO this does not need to be a hashmap lookup at runtime. make the bufnext / bufprev functions explicitly callable from here */
+        hm_lookup(g_commandMap, "bnext")(0,NULL);
+        break;
+    case C_LEFT:
+        hm_lookup(g_commandMap, "bprev")(0,NULL);
         break;
     }
     if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))

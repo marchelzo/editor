@@ -9,10 +9,10 @@ typedef struct {
     Buffer *b;
     void (*handleInput)(int);
     Config *conf;
-    EditorMode mode;
     int highCol;
     int xScroll;
     int yScroll;
+    EditorMode mode;
     int currentIndent; /* is this doing anything? */
     char *fileName;
     int handle;

@@ -131,9 +131,9 @@ int main(int argc, char *argv[])
     initscr();
     clear();
     raw();
-    cbreak();
     nonl();
     noecho();
+    keypad(stdscr, true);
     start_color();
     use_default_colors();
 

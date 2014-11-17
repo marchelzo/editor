@@ -87,10 +87,11 @@ void buf_updateScrollPosition(EditBuffer *b)
         b->yScroll = b->b->currentLine - g_termRows + 2;
 
     /* adjust horizontal scroll if necessary */
+    int numVisCols = g_termCols - (b->conf->lineNumbers ? 5 : 0);
     if (b->xScroll > gb_getPosition(b->b->line->content))
         b->xScroll = gb_getPosition(b->b->line->content);
-    if (b->xScroll + g_termCols <= gb_getPosition(b->b->line->content))
-        b->xScroll = gb_getPosition(b->b->line->content) - g_termCols + 1;
+    if (b->xScroll + numVisCols <= gb_getPosition(b->b->line->content))
+        b->xScroll = gb_getPosition(b->b->line->content) - numVisCols + 1;
 }
 
 void buf_nextLine(EditBuffer *b, int n)

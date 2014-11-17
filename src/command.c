@@ -23,15 +23,18 @@ void commandHandler(int c)
             free(g_command);
             return;
         case 10:
-        case 13:
+        case 13: {
+            /* we save a pointer to the _current_ contents of g_cb, because running the command may modify g_cb (e.g. opening a new buffer) */
+            EditBuffer *b = g_cb;
             runCommand(g_command);
             free(g_command);
             /* if the command left us in command mode, then go to normal mode */
-            if (g_cb->mode == COMMAND) {
-                g_cb->mode = NORMAL;
-                g_cb->handleInput = normalHandler;
+            if (b && b->mode == COMMAND) {
+                b->mode = NORMAL;
+                b->handleInput = normalHandler;
             }
             return;
+        }
         case 9:
             break;
         case KEY_BACKSPACE:
