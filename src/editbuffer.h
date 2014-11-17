@@ -78,4 +78,6 @@ void buf_normalMode(EditBuffer *b);
 
 void buf_S(EditBuffer *b);
 
+void buf_free(EditBuffer *b);
+
 #endif

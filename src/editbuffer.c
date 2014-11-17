@@ -35,7 +35,7 @@ EditBuffer *buf_new(void)
     b->handle = g_numBuffers++;
 
     /* add the new EditBuffer to the global list of EditBuffers */
-    g_bufList = realloc(g_bufList, g_numBuffers);
+    g_bufList = realloc(g_bufList, sizeof (EditBuffer *) * g_numBuffers);
     g_bufList[g_numBuffers - 1] = b;
 
     b->currentIndent = 0;
@@ -256,4 +256,12 @@ void buf_S(EditBuffer *b)
     unsigned char indent = b->conf->autoIndent ? b_getCurrentLineIndent(b->b) : 0;
     b_clearCurrentLine(b->b);
     b_insertSpaces(b->b, indent);
+}
+
+void buf_free(EditBuffer *b)
+{
+    free(b->fileName);
+    free(b->conf);
+    b_free(b->b);
+    free(b);
 }

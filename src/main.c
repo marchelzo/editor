@@ -10,6 +10,7 @@
 #include "commandcompletion.h"
 #include "quit.h"
 #include "bufwrite.h"
+#include "strdup.h"
 
 /* globals */
 EditBuffer *g_cb = NULL;
@@ -21,9 +22,17 @@ int g_termRows, g_termCols;
 StringList *g_commandList = NULL;
 HashMap *g_commandMap = NULL;
 
+static void bufclose(int, char**);
+
 static void quit(int argc, char **argv)
 {
-    g_edit_quit();
+    /* if there is only one buffer open, just quit.
+     * otherwise, close that buffer and continue running
+     */
+    if (g_numBuffers == 1)
+        g_edit_quit();
+    else
+        bufclose(0, NULL);
 }
 
 static void bufwrite(int argc, char **argv)
@@ -65,6 +74,34 @@ static void bufprev(int argc, char **argv)
     g_cb = g_bufList[g_cb->handle - 1];
 }
 
+static void bufclose(int argc, char **argv)
+{
+    /* TODO should this take an argument (buffer handle) instead of just closing the current buffer? who knows */
+    if (argc)
+        return;
+    int handle = g_cb->handle;
+    EditBuffer **newBufList = malloc(sizeof (EditBuffer *) * g_numBuffers - 1);
+    for (int i = 0; i < handle; ++i) {
+        newBufList[i] = g_bufList[i];
+        newBufList[i]->handle = i;
+    }
+    for (int i = handle + 1; i < g_numBuffers; ++i) {
+        newBufList[i - 1] = g_bufList[i];
+        newBufList[i - 1]->handle = i - 1;
+    }
+    --g_numBuffers;
+    free(g_bufList);
+    g_bufList = newBufList;
+    buf_free(g_cb);
+    if (handle == 0) {
+        /* we closed the first buffer, so we have to go to the next one */
+        g_cb = g_bufList[0];
+    } else {
+        /* we did not close the first buffer, so it's safe to go to the previous one */
+        g_cb = g_bufList[handle - 1];
+    }
+}
+
 int main(int argc, char *argv[])
 {
     g_numBuffers = 0;
@@ -72,7 +109,8 @@ int main(int argc, char *argv[])
     g_cb->conf->lineNumbers = 1;
     g_cb->conf->sw = 4;
     g_cb->conf->autoIndent = 1;
-    buf_loadFile(g_cb, argv[1]);
+    char *arg = strdup(argv[1]);
+    buf_loadFile(g_cb, arg);
 
     /* compl_initializeGlobalCommandList(); */
     /* compl_addGlobalCommand("write"); */

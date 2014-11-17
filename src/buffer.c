@@ -483,3 +483,14 @@ void b_clearCurrentLine(Buffer *b)
         b->line->content = gb_new();
     }
 }
+
+void b_free(Buffer *b)
+{
+    b_goToStart(b);
+    for (size_t i = 0; i < b->numLines - 1; ++i) {
+        gb_free(b->line->content);
+        b->line = b->line->next;
+        free(b->line->prev);
+    }
+    free(b);
+}
