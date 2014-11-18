@@ -29,7 +29,7 @@ If you open a file which contains tab characters, you will undoubtedly face prob
 
 ### Future
 
-Eventually I would like to add a mapping system similar to that of vim. Also, I would like to implement some form of runtime automation, either via a scripting language, macros, etc.
+Eventually I would like to add a mapping system similar to that of vim. Also, I would like to implement some form of runtime automation, via a scripting language, macros, etc.
 
 ### Usage
 
