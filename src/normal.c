@@ -163,6 +163,13 @@ void normalHandler(int c)
         g_cb->mode = INSERT;
         g_cb->handleInput = insertHandler;
         break;
+    case 'C':
+        buf_C(g_cb);
+        g_cb->mode = INSERT;
+        g_cb->handleInput = insertHandler;
+        break;
+    case 'x':
+        buf_deleteCharUnderCursor(g_cb);
     case C_RIGHT:
         /* TODO this does not need to be a hashmap lookup at runtime. make the bufnext / bufprev functions explicitly callable from here */
         hm_lookup(g_commandMap, "bnext")(0,NULL);

@@ -82,4 +82,8 @@ void buf_free(EditBuffer *b);
 
 void buf_drawFileName(EditBuffer *b);
 
+void buf_C(EditBuffer *b);
+
+void buf_deleteCharUnderCursor(EditBuffer *b);
+
 #endif

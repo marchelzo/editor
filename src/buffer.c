@@ -494,3 +494,8 @@ void b_free(Buffer *b)
     }
     free(b);
 }
+
+unsigned char b_currentLineIsEmpty(Buffer *b)
+{
+    return gb_length(b->line->content) == 0;
+}

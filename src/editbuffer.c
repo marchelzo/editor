@@ -259,6 +259,11 @@ void buf_S(EditBuffer *b)
     b_insertSpaces(b->b, indent);
 }
 
+void buf_C(EditBuffer *b)
+{
+    b_deleteUntilEOL(b->b);
+}
+
 void buf_free(EditBuffer *b)
 {
     free(b->fileName);
@@ -273,4 +278,12 @@ void buf_free(EditBuffer *b)
 void buf_drawFileName(EditBuffer *b)
 {
     mvaddstr(g_termRows - 1, 0, b->fileName ? b->fileName : "[No Name]");
+}
+
+void buf_deleteCharUnderCursor(EditBuffer *b)
+{
+    if (b_currentLineIsEmpty(b->b))
+        return;
+    b_cursorRight(b->b);
+    b_backspace(b->b);
 }
