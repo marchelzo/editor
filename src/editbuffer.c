@@ -266,3 +266,11 @@ void buf_free(EditBuffer *b)
     b_free(b->b);
     free(b);
 }
+
+/* if the current buffer is associated with a file, print the file's relative
+ * name at the bottom of the screen, else print [No Name]
+ */
+void buf_drawFileName(EditBuffer *b)
+{
+    mvaddstr(g_termRows - 1, 0, b->fileName ? b->fileName : "[No Name]");
+}

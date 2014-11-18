@@ -80,4 +80,6 @@ void buf_S(EditBuffer *b);
 
 void buf_free(EditBuffer *b);
 
+void buf_drawFileName(EditBuffer *b);
+
 #endif

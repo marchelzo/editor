@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <curses.h>
+#include <string.h>
 
 #include "buffer.h"
 #include "state.h"
@@ -102,6 +103,23 @@ static void bufclose(int argc, char **argv)
     }
 }
 
+static void drawOpenBufferNames(void)
+{
+    int xOff = 0;
+    move(g_termRows - 1, 0);
+    for (int i = 0; i < g_numBuffers; ++i) {
+        if (strlen(g_bufList[i]->fileName) + xOff > g_termCols) /* TODO this should account for the spaces between buffer names as well */
+            break;
+        if (i == g_cb->handle)
+            attron(COLOR_PAIR(2));
+        addstr(g_bufList[i]->fileName);
+        addch(' ');
+        xOff += strlen(g_bufList[i]->fileName) + 1;
+        if (i == g_cb->handle)
+            attroff(COLOR_PAIR(2));
+    }
+}
+
 int main(int argc, char *argv[])
 {
     g_numBuffers = 0;
@@ -138,7 +156,8 @@ int main(int argc, char *argv[])
     use_default_colors();
 
     /* initialize some color pairs */
-    init_pair(1, COLOR_YELLOW, -1); /*  on default bg */
+    init_pair(1, COLOR_YELLOW, -1); /* yellow on default bg */
+    init_pair(2, COLOR_GREEN, -1); /* green on default bg */
 
     /* get the terminal dimensions */
     getmaxyx(stdscr, g_termRows, g_termCols);
@@ -149,9 +168,12 @@ int main(int argc, char *argv[])
     while (1) {
         c = getch();
         g_cb->handleInput(c);
-        clear();
+        erase();
         buf_updateScrollPosition(g_cb);
         b_cursesDraw(g_cb->b, 0, 0);
+        if (g_cb->mode != COMMAND)
+            //buf_drawFileName(g_cb);
+            drawOpenBufferNames();
         b_cursesPositionCursor(g_cb->b, 0, 0);
         refresh();
     }
