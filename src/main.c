@@ -125,10 +125,11 @@ static void colorSelection(void)
 {
     unsigned char xOff = g_cb->conf->lineNumbers ? 5 : 0;
     LineNode *l = g_cb->b->line;
-    for (int i = g_cb->b->currentLine; i > g_cb->yScroll && i > g_cb->vs.startRow; --i)
+    int firstLineToColor = MAX(g_cb->yScroll, g_cb->vs.startRow);
+    for (int i = g_cb->b->currentLine; i > firstLineToColor; --i)
         l = l->prev;
-    for (unsigned int i = g_cb->vs.startRow; i <= g_cb->vs.endRow; ++i) {
-            mvchgat(i + g_cb->vs.startRow - g_cb->yScroll, xOff, gb_length(l->content), (COLOR_PAIR(3)), 3, NULL);
+    for (unsigned int i = firstLineToColor; i <= g_cb->vs.endRow; ++i) {
+            mvchgat(i - g_cb->yScroll, xOff, gb_length(l->content), (COLOR_PAIR(3)), 3, NULL);
             l = l->next;
     }
 }
