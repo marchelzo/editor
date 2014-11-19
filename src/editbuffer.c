@@ -5,6 +5,7 @@
 #include "normal.h"
 #include "state.h"
 #include "insert.h"
+#include "visual.h"
 #include "command.h"
 #include <curses.h>
 
@@ -286,4 +287,19 @@ void buf_deleteCharUnderCursor(EditBuffer *b)
         return;
     b_cursorRight(b->b);
     b_backspace(b->b);
+}
+
+/* put the EditBuffer into visual mode,
+ * and reset the visual selection region
+ * so that the current selection is just
+ * the character under the cursor
+ */
+void buf_visualMode(EditBuffer *b)
+{
+    b->mode = VISUAL;
+    b->handleInput = visualHandler;
+    b->vs.startRow = b->b->currentLine;
+    b->vs.startCol = b_columnNumber(b->b);
+    b->vs.endRow = b->b->currentLine;
+    b->vs.endCol = b_columnNumber(b->b);
 }

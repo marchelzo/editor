@@ -120,6 +120,19 @@ static void drawOpenBufferNames(void)
     }
 }
 
+/* TODO this is nowhere near functional. fix it for corner cases */
+static void colorSelection(void)
+{
+    unsigned char xOff = g_cb->conf->lineNumbers ? 5 : 0;
+    LineNode *l = g_cb->b->line;
+    for (int i = g_cb->b->currentLine; i > g_cb->yScroll && i > g_cb->vs.startRow; --i)
+        l = l->prev;
+    for (unsigned int i = g_cb->vs.startRow; i <= g_cb->vs.endRow; ++i) {
+            mvchgat(i + g_cb->vs.startRow - g_cb->yScroll, xOff, gb_length(l->content), (COLOR_PAIR(3)), 3, NULL);
+            l = l->next;
+    }
+}
+
 int main(int argc, char *argv[])
 {
     g_numBuffers = 0;
@@ -158,6 +171,7 @@ int main(int argc, char *argv[])
     /* initialize some color pairs */
     init_pair(1, COLOR_YELLOW, -1); /* yellow on default bg */
     init_pair(2, COLOR_GREEN, -1); /* green on default bg */
+    init_pair(3, COLOR_WHITE, COLOR_BLUE); /* white on blue (selected text) */
 
     /* get the terminal dimensions */
     getmaxyx(stdscr, g_termRows, g_termCols);
@@ -172,8 +186,9 @@ int main(int argc, char *argv[])
         buf_updateScrollPosition(g_cb);
         b_cursesDraw(g_cb->b, 0, 0);
         if (g_cb->mode != COMMAND)
-            //buf_drawFileName(g_cb);
             drawOpenBufferNames();
+        if (g_cb->mode == VISUAL)
+            colorSelection();
         b_cursesPositionCursor(g_cb->b, 0, 0);
         refresh();
     }

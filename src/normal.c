@@ -154,6 +154,9 @@ void normalHandler(int c)
     case 544:
         hm_lookup(g_commandMap, "bprev")(0,NULL);
         break;
+    case 'v':
+        buf_visualMode(g_cb);
+        break;
     }
     if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))
         buf_goToLastCharOnCurrentLine(g_cb);

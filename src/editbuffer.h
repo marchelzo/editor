@@ -4,6 +4,7 @@
 #include "buffer.h"
 #include "config.h"
 #include "mode.h"
+#include "visual.h"
 
 typedef struct {
     Buffer *b;
@@ -16,6 +17,7 @@ typedef struct {
     int currentIndent; /* is this doing anything? */
     char *fileName;
     int handle;
+    VisualSelection vs;
 } EditBuffer;
 
 EditBuffer *buf_new(void);
@@ -85,5 +87,7 @@ void buf_drawFileName(EditBuffer *b);
 void buf_C(EditBuffer *b);
 
 void buf_deleteCharUnderCursor(EditBuffer *b);
+
+void buf_visualMode(EditBuffer *b);
 
 #endif

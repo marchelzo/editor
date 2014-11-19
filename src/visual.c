@@ -6,8 +6,6 @@
 #include "keyaliases.h"
 #include "insert.h"
 
-static int charsConsumed;
-
 void visualHandler(int c)
 {
     switch (c) {
@@ -65,7 +63,6 @@ void visualHandler(int c)
         break;
     case 'g':
         c = getch();
-        ++charsConsumed;
         if (c == 'g') {
             buf_goToFirstLine(g_cb);
             buf_goToSOL(g_cb);
@@ -77,20 +74,17 @@ void visualHandler(int c)
         break;
     case 'd':
         c = getch();
-        ++charsConsumed;
         if (c == 'd')
             buf_deleteCurrentLine(g_cb);
         break;
     case 'z':
         c = getch();
-        ++charsConsumed;
         if (c == 'z')
             buf_centerOnCurrentLine(g_cb);
         break;
     case 'f':
         {
         c = getch();
-        ++charsConsumed;
         size_t col = buf_columnNumber(g_cb);
         b_forwardUntil(g_cb->b, c, 0, 1);
         if (b_charUnderCursor(g_cb->b) != c)
@@ -101,7 +95,6 @@ void visualHandler(int c)
     case 'F':
         {
         c = getch();
-        ++charsConsumed;
         size_t col = buf_columnNumber(g_cb);
         b_backwardUntil(g_cb->b, c, 0, 1);
         if (b_charUnderCursor(g_cb->b) != c)
@@ -158,6 +151,8 @@ void visualHandler(int c)
         hm_lookup(g_commandMap, "bprev")(0,NULL);
         break;
     }
-    if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))
+    if (g_cb->mode != INSERT  && buf_isAtEOL(g_cb))
         buf_goToLastCharOnCurrentLine(g_cb);
+    g_cb->vs.endRow = g_cb->b->currentLine;
+    g_cb->vs.endCol = b_columnNumber(g_cb->b);
 }
