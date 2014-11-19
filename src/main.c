@@ -129,7 +129,7 @@ static void colorSelection(void)
     for (int i = g_cb->b->currentLine; i > firstLineToColor; --i)
         l = l->prev;
     for (unsigned int i = firstLineToColor; i <= g_cb->vs.endRow; ++i) {
-            mvchgat(i - g_cb->yScroll, xOff, gb_length(l->content), (COLOR_PAIR(3)), 3, NULL);
+            mvchgat(i - g_cb->yScroll, xOff, gb_length(l->content) - g_cb->xScroll, (COLOR_PAIR(3)), 3, NULL);
             l = l->next;
     }
 }

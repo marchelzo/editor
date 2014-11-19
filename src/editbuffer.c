@@ -143,9 +143,9 @@ void buf_appendEOL(EditBuffer *b)
     buf_setMode(b, INSERT);
 }
 
-void buf_insertSOL(EditBuffer *b)
+void buf_insertFNW(EditBuffer *b)
 {
-    buf_goToSOL(b);
+    b_goToFirstNonWhitespaceCharOnLine(b->b);
     buf_setMode(b, INSERT);
 }
 

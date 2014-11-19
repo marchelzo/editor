@@ -54,7 +54,7 @@ void buf_setMode(EditBuffer *b, EditorMode mode);
 
 void buf_appendEOL(EditBuffer *b);
 
-void buf_insertSOL(EditBuffer *b);
+void buf_insertFNW(EditBuffer *b);
 
 void buf_deleteCurrentLine(EditBuffer *b);
 

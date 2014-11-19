@@ -1,4 +1,5 @@
 #include "visual.h"
+#include "normal.h"
 #include "state.h"
 #include "mode.h"
 #include "gapbuffer.h"
@@ -10,7 +11,8 @@ void visualHandler(int c)
 {
     switch (c) {
     case 27:
-        g_edit_quit();
+        g_cb->mode = NORMAL;
+        g_cb->handleInput = normalHandler;
     case KEY_MOVE_RIGHT:
         b_cursorRight(g_cb->b);
         g_cb->highCol = gb_getPosition(g_cb->b->line->content);
@@ -59,7 +61,7 @@ void visualHandler(int c)
         buf_appendEOL(g_cb);
         break;
     case KEY_INSERT_SOL:
-        buf_insertSOL(g_cb);
+        buf_insertFNW(g_cb);
         break;
     case 'g':
         c = getch();

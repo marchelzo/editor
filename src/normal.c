@@ -63,7 +63,7 @@ void normalHandler(int c)
         buf_appendEOL(g_cb);
         break;
     case KEY_INSERT_SOL:
-        buf_insertSOL(g_cb);
+        buf_insertFNW(g_cb);
         break;
     case 'g':
         c = getch();
