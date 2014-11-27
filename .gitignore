@@ -1,5 +1,6 @@
 *.swo
 *.swp
 *.sw*
+*~
 *.o
 edit
