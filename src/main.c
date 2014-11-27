@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <curses.h>
 #include <string.h>
+#include <HsFFI.h>
 
 #include "buffer.h"
 #include "state.h"
@@ -12,6 +13,7 @@
 #include "quit.h"
 #include "bufwrite.h"
 #include "strdup.h"
+#include "lisp/EditorLisp_stub.h"
 
 /* globals */
 EditBuffer *g_cb = NULL;
@@ -63,7 +65,8 @@ static void bufnext(int argc, char **argv)
         return;
     if (g_cb->handle + 1 == g_numBuffers)
         return;
-    g_cb = g_bufList[g_cb->handle + 1];
+    lispEval("(next-buffer)");
+    //g_cb = g_bufList[g_cb->handle + 1];
 }
 
 static void bufprev(int argc, char **argv)
@@ -136,6 +139,7 @@ static void colorSelection(void)
 
 int main(int argc, char *argv[])
 {
+    hs_init(&argc, &argv);
     g_numBuffers = 0;
     g_cb = buf_new();
     g_cb->conf->lineNumbers = 1;
@@ -156,7 +160,6 @@ int main(int argc, char *argv[])
     hm_insert(g_commandMap, "e", bufedit);
     hm_insert(g_commandMap, "bnext", bufnext);
     hm_insert(g_commandMap, "bprev", bufprev);
-
     g_command = malloc(1);
     g_command[0] = '\0';
 
