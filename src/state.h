@@ -34,4 +34,7 @@ extern StringList *g_commandList;
 /* hashmap that maps commands to actions */
 extern HashMap *g_commandMap;
 
+/* result of the last evaluated lisp expr */
+extern char *g_evalResult;
+
 #endif

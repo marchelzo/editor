@@ -24,6 +24,7 @@ char *g_command = NULL;
 int g_termRows, g_termCols;
 StringList *g_commandList = NULL;
 HashMap *g_commandMap = NULL;
+char *g_evalResult = NULL;
 
 static void bufclose(int, char**);
 
@@ -193,6 +194,8 @@ int main(int argc, char *argv[])
             drawOpenBufferNames();
         if (g_cb->mode == VISUAL)
             colorSelection();
+	if (g_evalResult)
+	    mvaddstr(g_termRows - 1, 10, g_evalResult);
         b_cursesPositionCursor(g_cb->b, 0, 0);
         refresh();
     }
