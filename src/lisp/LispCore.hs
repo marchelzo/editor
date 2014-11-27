@@ -31,6 +31,7 @@ defaultContext = M.fromList [("+", Fn plus), ("-", Fn minus), ("*", Fn mult), ("
                             ,("sqrt",        Fn lispSqrt )
                             ,("exp" ,        Fn lispExp  )
                             ,("next-buffer", Fn bufNext  )
+                            ,("new-buffer",  Fn bufNew   )
                             ]
 
 type REPL = IO

@@ -1,4 +1,5 @@
 #include <string.h>
+#include <HsFFI.h>
 
 #include "command.h"
 #include "state.h"
@@ -8,6 +9,7 @@
 #include "bufwrite.h"
 #include "commandcompletion.h"
 #include "strdup.h"
+#include "lisp/EditorLisp_stub.h"
 
 static void appendToCommand(char c);
 static void backspaceCommand(void);
@@ -64,15 +66,16 @@ static void appendToCommand(char c)
 
 void runCommand(char *com)
 {
-    Command *c = parseCommand(com);
-    if (c == NULL)
-        return; /* TODO INVALID INPUT -- COULD NOT PARSE */
-    CommandAction a = hm_lookup(g_commandMap, c->command);
-    if (a == NULL)
-        return; /* TODO INVALID COMMAND */
+    lispEval(com);
+    //Command *c = parseCommand(com);
+    //if (c == NULL)
+    //    return; /* TODO INVALID INPUT -- COULD NOT PARSE */
+    //CommandAction a = hm_lookup(g_commandMap, c->command);
+    //if (a == NULL)
+    //    return; /* TODO INVALID COMMAND */
 
-    /* run the command with the arguments parsed */
-    a(c->argc, c->argv);
+    ///* run the command with the arguments parsed */
+    //a(c->argc, c->argv);
 }
 
 static void backspaceCommand(void)

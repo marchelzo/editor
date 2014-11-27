@@ -5,6 +5,7 @@ module LispFunctions where
 import Foreign.C.String
 import Foreign.C
 import System.IO.Unsafe (unsafePerformIO)
+import Control.DeepSeq (force)
 
 import LispValues
 
@@ -61,7 +62,14 @@ lispOr :: [Expr] -> Expr
 lispOr [Bool p, Bool q] = Bool (p || q)
 lispOr _                = Error "error: or requires two boolean arguments"
 
+
+-- | Foreign C functions to mutate the editor state  |
+---------------------------------------------------- |
+
+foreign import ccall "../lispbindings.h next_buffer" nextBuffer :: IO ()
+foreign import ccall "../lispbindings.h new_buffer" bufNew' :: CString -> IO ()
+
 bufNext :: [Expr] -> Expr
 bufNext [] = seq (unsafePerformIO nextBuffer) (Number 1)
 
-foreign import ccall "../lispbindings.h next_buffer" nextBuffer :: IO ()
+bufNew [String s] = seq (force (unsafePerformIO (bufNew' (unsafePerformIO (newCString s))))) (Number 1)
