@@ -499,3 +499,35 @@ unsigned char b_currentLineIsEmpty(Buffer *b)
 {
     return gb_length(b->line->content) == 0;
 }
+
+char *b_cString(Buffer *b)
+{
+    LineNode *l = b->line;
+    size_t length = 0;
+    size_t lines;
+    while (l->prev) {
+	length += gb_length(l->content);
+	++lines;
+	l = l->prev;
+    }
+    length += gb_length(l->content);
+    LineNode *l2 = b->line;
+    while (l2->next) {
+	l2 = l2->next;
+	++lines;
+	length += gb_length(l2->content);
+    }
+    char *result = malloc(length + lines + 1);
+    char *temp = NULL;
+    size_t pos = 0;
+    while (l) {
+	temp = gb_cString(l->content);
+	strcat(result, temp);
+	pos += gb_length(l->content);
+	result[pos++] = '\n';
+	free(temp);
+	l = l->next;
+    }
+    result[pos] = '\0';
+    return result;
+}

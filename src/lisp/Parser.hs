@@ -16,10 +16,10 @@ readProgram p = parse parseProgram "" (noComments p) where
   notComment _ = True
 
 whitespace :: Parser Char
-whitespace = space <|> (char '\t') <|> newline <|> (eof >> return '0')
+whitespace = space <|> (char '\t') <|> newline
 
 parseProgram :: Parser [Expr]
-parseProgram = skipMany whitespace >> endBy parseExpr (many1 whitespace)
+parseProgram = skipMany whitespace >> endBy parseExpr (many whitespace)
 
 parseExpr :: Parser Expr
 parseExpr =     try parseFunctionDef

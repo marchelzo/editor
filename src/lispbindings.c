@@ -4,8 +4,9 @@
 #include "lispbindings.h"
 #include "editbuffer.h"
 #include "lisp/EditorLisp_stub.h"
+#include "normal.h"
 
-void evalLisp(const char *code)
+void evalLisp(char *code)
 {
   char *result = lispEval(code);
   free(g_evalResult);
@@ -27,5 +28,14 @@ void new_buffer(char *s)
     g_cb = b;
 }
 
+void normal_eval(char *s)
+{
+    normalModeEval(s);
+}
 
-
+void eval_buffer(void)
+{
+    char *b = b_cString(g_cb->b);
+    evalLisp(b);
+    free(b);
+}

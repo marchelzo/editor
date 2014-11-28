@@ -62,6 +62,7 @@ void b_sameIndentAsBelow(Buffer *b);
 void b_clearCurrentLine(Buffer *b);
 void b_free(Buffer *b);
 unsigned char b_currentLineIsEmpty(Buffer *b);
+char *b_cString(Buffer *b);
 
 
 #endif

@@ -10,6 +10,7 @@ import Foreign.C.String
 import Foreign.C
 
 evalProgram :: [Expr] -> IO String
+evalProgram [] = return ""
 evalProgram [e] = fmap show (eval e)
 evalProgram (e:es) = eval e >> evalProgram es
 

@@ -68,8 +68,15 @@ lispOr _                = Error "error: or requires two boolean arguments"
 
 foreign import ccall "../lispbindings.h next_buffer" nextBuffer :: IO ()
 foreign import ccall "../lispbindings.h new_buffer" bufNew' :: CString -> IO ()
+foreign import ccall "../lispbindings.h normal_eval" normalEval' :: CString -> IO ()
+
+foreign import ccall "../lispbindings.h eval_buffer" evalBuffer' :: IO ()
 
 bufNext :: [Expr] -> Expr
 bufNext [] = seq (unsafePerformIO nextBuffer) (Number 1)
 
 bufNew [String s] = seq (force (unsafePerformIO (bufNew' (unsafePerformIO (newCString s))))) (Number 1)
+
+normalEval [String s] = seq (force (unsafePerformIO (normalEval' (unsafePerformIO (newCString s))))) (Number 1)
+
+evalBuffer [] = seq (unsafePerformIO evalBuffer') (Number 1)

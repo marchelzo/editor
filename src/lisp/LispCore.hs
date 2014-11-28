@@ -20,18 +20,20 @@ type Context = M.Map String Expr
 
 
 defaultContext = M.fromList [("+", Fn plus), ("-", Fn minus), ("*", Fn mult), ("/", Fn divide)
-                            ,("cons",        Fn cons     )
-                            ,("car" ,        Fn car      )
-                            ,("cdr" ,        Fn cdr      )
-                            ,("nil?",        Fn nil      )
-                            ,("eq?" ,        Fn eq       )
-                            ,("list",        Fn mkList   )
-                            ,("or"  ,        Fn lispOr   )
-                            ,("and" ,        Fn lispAnd  )
-                            ,("sqrt",        Fn lispSqrt )
-                            ,("exp" ,        Fn lispExp  )
-                            ,("next-buffer", Fn bufNext  )
-                            ,("new-buffer",  Fn bufNew   )
+                            ,("cons",        Fn cons         )
+                            ,("car" ,        Fn car          )
+                            ,("cdr" ,        Fn cdr          )
+                            ,("nil?",        Fn nil          )
+                            ,("eq?" ,        Fn eq           )
+                            ,("list",        Fn mkList       )
+                            ,("or"  ,        Fn lispOr       )
+                            ,("and" ,        Fn lispAnd      )
+                            ,("sqrt",        Fn lispSqrt     )
+                            ,("exp" ,        Fn lispExp      )
+                            ,("next-buffer", Fn bufNext      )
+                            ,("new-buffer",  Fn bufNew       )
+                            ,("normal",      Fn normalEval   )
+                            ,("eval-buffer", Fn evalBuffer   )
                             ]
 
 type REPL = IO
