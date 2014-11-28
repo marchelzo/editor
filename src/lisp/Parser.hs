@@ -9,6 +9,18 @@ import LispValues
 readExpr :: String -> Either ParseError Expr
 readExpr e = parse parseExpr "" e
 
+readProgram :: String -> Either ParseError [Expr]
+readProgram p = parse parseProgram "" (noComments p) where
+  noComments = unlines . filter (notComment) . lines
+  notComment (';':_) = False
+  notComment _ = True
+
+whitespace :: Parser Char
+whitespace = space <|> (char '\t') <|> newline <|> (eof >> return '0')
+
+parseProgram :: Parser [Expr]
+parseProgram = skipMany whitespace >> endBy parseExpr (many1 whitespace)
+
 parseExpr :: Parser Expr
 parseExpr =     try parseFunctionDef
             <|> try parseLambda
@@ -53,9 +65,9 @@ parseDefine :: Parser Expr
 parseDefine = do
     _   <- char '('
     _   <- string "def"
-    _   <- char ' '
+    skipMany1 whitespace
     sym <- parseName
-    _   <- char ' '
+    skipMany1 whitespace
     e   <- parseExpr
     _   <- char ')'
     return $ Define sym e
@@ -64,11 +76,11 @@ parseLambda :: Parser Expr
 parseLambda = do
     _        <- char '('
     _        <- string "lambda"
-    _        <- char ' '
+    skipMany1 whitespace
     _        <- char '('
-    captured <- sepBy (many1 letter) (char ' ')
+    captured <- sepBy (many1 letter) whitespace
     _        <- char ')'
-    _        <- char ' '
+    skipMany1 whitespace
     expr     <- parseExpr
     _        <- char ')'
     return $ Lambda captured expr
@@ -77,8 +89,8 @@ parseFunctionDef :: Parser Expr
 parseFunctionDef = do
     _        <- string "(def ("
     fn       <- parseName
-    _        <- char ' '
-    captured <- sepBy (many1 letter) (char ' ')
+    skipMany1 whitespace
+    captured <- sepBy (many1 letter) whitespace
     _        <- string ") "
     expr     <- parseExpr
     _        <- char ')'
@@ -112,9 +124,9 @@ parseIf :: Parser Expr
 parseIf = do
     _ <- string "(if "
     c <- parseExpr
-    _ <- char ' '
+    skipMany1 whitespace
     a <- parseExpr
-    _ <- char ' '
+    skipMany1 whitespace
     b <- parseExpr
     _ <- char ')'
     return $ If c a b
