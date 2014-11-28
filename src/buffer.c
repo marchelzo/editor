@@ -504,7 +504,7 @@ char *b_cString(Buffer *b)
 {
     LineNode *l = b->line;
     size_t length = 0;
-    size_t lines;
+    size_t lines = 0;
     while (l->prev) {
 	length += gb_length(l->content);
 	++lines;
@@ -518,6 +518,7 @@ char *b_cString(Buffer *b)
 	length += gb_length(l2->content);
     }
     char *result = malloc(length + lines + 1);
+    result[0] = '\0';
     char *temp = NULL;
     size_t pos = 0;
     while (l) {
