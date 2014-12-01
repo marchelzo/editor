@@ -5,6 +5,7 @@
 #include "editbuffer.h"
 #include "lisp/EditorLisp_stub.h"
 #include "normal.h"
+#include "mappings.h"
 
 void evalLisp(char *code)
 {
@@ -19,6 +20,13 @@ void next_buffer(void)
     if (g_cb->handle + 1 == g_numBuffers)
         return;
     g_cb = g_bufList[g_cb->handle + 1];
+}
+
+void prev_buffer(void)
+{
+    if (g_cb->handle == 0)
+        return;
+    g_cb = g_bufList[g_cb->handle - 1];
 }
 
 void new_buffer(char *s)
@@ -38,4 +46,32 @@ void eval_buffer(void)
     char *b = b_cString(g_cb->b);
     evalLisp(b);
     free(b);
+}
+
+void normal_map(char *to, char *from)
+{
+    mappings_newNormal(to, from);
+    free(to);
+    free(from);
+}
+
+void insert_map(char *to, char *from)
+{
+    mappings_newInsert(to, from);
+    free(to);
+    free(from);
+}
+
+void visual_map(char *to, char *from)
+{
+    mappings_newVisual(to, from);
+    free(to);
+    free(from);
+}
+
+void command_map(char *to, char *from)
+{
+    mappings_newCommand(to, from);
+    free(to);
+    free(from);
 }

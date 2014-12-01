@@ -1,5 +1,6 @@
 #include "commandcompletion.h"
 #include "state.h"
+#include "istring.h"
 
 #include <string.h>
 
@@ -50,7 +51,7 @@ void compl_addGlobalCommand(char *com)
         return;
     if (!(letter(com[0])))
         return;
-    sl_add(g_commandList + (com[0] - 'A'), com);
+    sl_add(g_commandList + (com[0] - 'A'), ifromstr(com), NULL);
 }
 
 void compl_initializeGlobalCommandList(void)

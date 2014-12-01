@@ -37,4 +37,7 @@ extern HashMap *g_commandMap;
 /* result of the last evaluated lisp expr */
 extern char *g_evalResult;
 
+/* StringList that contains all of the mappings for the current editor mode */
+extern StringList *keyMappings;
+
 #endif

@@ -25,6 +25,7 @@ parseExpr :: Parser Expr
 parseExpr =     try parseFunctionDef
             <|> try parseLambda
             <|> try parseDefine
+            <|> try parseBegin
             <|> try parseIf
             <|> try parseEval
             <|> parseQuoted
@@ -71,6 +72,15 @@ parseDefine = do
     e   <- parseExpr
     _   <- char ')'
     return $ Define sym e
+
+parseBegin :: Parser Expr
+parseBegin = do
+    _ <- string "(begin"
+    skipMany1 whitespace
+    es <- sepBy parseExpr (many1 whitespace)
+    skipMany whitespace
+    _ <- char ')'
+    return (Begin es)
 
 parseLambda :: Parser Expr
 parseLambda = do

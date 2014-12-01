@@ -84,8 +84,8 @@ void buf_updateScrollPosition(EditBuffer *b)
     /* adjust vertical scroll if necessary */
     if (b->yScroll > b->b->currentLine)
         b->yScroll = b->b->currentLine;
-    if (b->yScroll + g_termRows <= 1 + b->b->currentLine)
-        b->yScroll = b->b->currentLine - g_termRows + 2;
+    if (b->yScroll + g_termRows <= 2 + b->b->currentLine)
+        b->yScroll = b->b->currentLine - g_termRows + 3; /* This 3 is to account for the command line and buffer list */
 
     /* adjust horizontal scroll if necessary */
     int numVisCols = g_termCols - (b->conf->lineNumbers ? 5 : 0);
@@ -225,11 +225,12 @@ void buf_commandMode(EditBuffer *b)
     b->handleInput(c);
 }
 
-//TODO make this actually print the command and not just a colon
+/* TODO make this actually print the command and not just a colon */
+/* This is bad and needs to die */
 void buf_drawCommandLine(EditBuffer *b)
 {
     g_command = calloc(1,1);
-    mvaddch(g_termRows - 1, 0, ':');
+    mvaddch(g_termRows - 2, 0, ':');
 }
 
 void buf_centerOnCurrentLine(EditBuffer *b)

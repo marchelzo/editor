@@ -30,15 +30,22 @@ defaultContext = M.fromList [("+", Fn plus), ("-", Fn minus), ("*", Fn mult), ("
                             ,("and" ,        Fn lispAnd      )
                             ,("sqrt",        Fn lispSqrt     )
                             ,("exp" ,        Fn lispExp      )
+                            ,("strlen",      Fn strLen       )
+                            ,("strtake",     Fn strTake      )
+                            ,("substr",      Fn substr       )
+                            ,("strdrop",     Fn strDrop      )
+                            ,("strcat",      Fn strCat       )
+                            ,("toupper",     Fn strToUp      )
+                            ,("tolower",     Fn strToLow     )
                             ,("next-buffer", Fn bufNext      )
+                            ,("prev-buffer", Fn bufPrev      )
                             ,("new-buffer",  Fn bufNew       )
                             ,("normal",      Fn normalEval   )
                             ,("eval-buffer", Fn evalBuffer   )
+                            ,("key-map",     Fn keyMap       )
                             ]
 
-type REPL = IO
-
-eval :: Expr -> REPL Expr
+eval :: Expr -> IO Expr
 eval (Number x) = return (Number x)
 eval (String s) = return (String s)
 eval (Symbol s) = do
@@ -69,9 +76,10 @@ eval (Quoted (Number x)) = return (Number x)
 eval (Quoted e) = return (Quoted e)
 eval (Eval (Quoted e)) = eval e
 eval (Eval e)          = eval e
+eval (Begin es)        = mapM eval es >>= (return . last)
 eval e = return e
 
-apply :: Expr -> [Expr] -> REPL Expr
+apply :: Expr -> [Expr] -> IO Expr
 apply (Fn f) xs = return $ f xs
 apply (Lambda cs (Lambda ics e)) xs = do
     ctx <- getContext
@@ -94,7 +102,7 @@ apply (Lambda cs e) xs = do
 
 apply _ _ = return (Error "invalid expression")
 
-partialEval :: Expr -> REPL Expr
+partialEval :: Expr -> IO Expr
 partialEval (Symbol s) = do
     ctx <- getContext
     let res = M.lookup s ctx
@@ -106,8 +114,8 @@ partialEval (List xs) = do
     return $ List xs'
 partialEval x = return x
 
-getContext :: REPL Context
+getContext :: IO Context
 getContext = liftIO (readIORef context)
 
-putContext :: Context -> REPL ()
+putContext :: Context -> IO ()
 putContext ctx  = liftIO (writeIORef context ctx)

@@ -13,7 +13,9 @@
 #include "quit.h"
 #include "bufwrite.h"
 #include "strdup.h"
+#include "mappings.h"
 #include "lisp/EditorLisp_stub.h"
+#include "istring.h"
 
 /* globals */
 EditBuffer *g_cb = NULL;
@@ -27,6 +29,9 @@ HashMap *g_commandMap = NULL;
 char *g_evalResult = NULL;
 
 static void bufclose(int, char**);
+static void handleInput(int c);
+static void executeInput(const int *in);
+
 
 static void quit(int argc, char **argv)
 {
@@ -66,8 +71,7 @@ static void bufnext(int argc, char **argv)
         return;
     if (g_cb->handle + 1 == g_numBuffers)
         return;
-    lispEval("(next-buffer)");
-    //g_cb = g_bufList[g_cb->handle + 1];
+    g_cb = g_bufList[g_cb->handle + 1];
 }
 
 static void bufprev(int argc, char **argv)
@@ -138,6 +142,94 @@ static void colorSelection(void)
     }
 }
 
+void executeInput(const int *in)
+{
+    /* ungetch repeatedly on the string, backwards, so that when
+     * we read it, it's in the proper order
+     */
+    size_t len = istrlen(in);
+    for (int i = len - 1; i >= 0; --i)
+        ungetch(in[i]);
+
+    int ch;
+    while (1) {
+        nodelay(stdscr, TRUE);
+        ch = getch();
+        if (ch == ERR)
+            break;
+        else
+            ungetch(ch);
+        nodelay(stdscr, FALSE);
+        g_cb->handleInput(getch());
+    }
+    nodelay(stdscr, FALSE);
+}
+
+void resetMappingMode(void)
+{
+    switch (g_cb->mode) {
+    case NORMAL:
+        mappings_setNormal();
+        break;
+    case INSERT:
+        mappings_setInsert();
+        break;
+    case VISUAL:
+        mappings_setVisual();
+        break;
+    case COMMAND:
+        mappings_setCommand();
+        break;
+    }
+}
+
+/* wrapper for handling input that replaces keys with 
+ * their re-mapped analogue if there exists one
+ */
+static void handleInput(int c)
+{
+    static int *buffer = NULL;
+    static size_t len = 0;
+
+    const int *mv; /* used for lookup results */
+
+    if (!buffer) buffer = malloc(100);
+
+    buffer[len++] = c;
+    buffer[len]   = '\0';
+
+    mappings_filter(c);
+
+    const StringList *ps = mappings_getPossibilities();
+    if (ps->length == 0) {
+        executeInput(buffer);
+        free(buffer);
+        buffer = NULL;
+        len = 0;
+        resetMappingMode();
+    } else if (ps->length == 1) {
+        executeInput(ps->strings->mapValue);
+        free(buffer);
+        buffer = NULL;
+        len = 0;
+        resetMappingMode();
+    } else if (mv = sl_contains(ps, buffer)) {
+        halfdelay(10);
+        int ch = getch();
+        nocbreak();
+        cbreak();
+        if (ch == ERR) {
+            executeInput(mv);
+            free(buffer);
+            buffer = NULL;
+            len = 0;
+            resetMappingMode();
+        } else {
+            handleInput(ch);
+        }
+    }
+}
+
 int main(int argc, char *argv[])
 {
     hs_init(&argc, &argv);
@@ -148,6 +240,9 @@ int main(int argc, char *argv[])
     g_cb->conf->autoIndent = 1;
     char *arg = strdup(argv[1]);
     buf_loadFile(g_cb, arg);
+
+    mappings_init();
+    mappings_setNormal();
 
     /* compl_initializeGlobalCommandList(); */
     /* compl_addGlobalCommand("write"); */
@@ -186,7 +281,7 @@ int main(int argc, char *argv[])
     b_cursesPositionCursor(g_cb->b, 0, 0);
     while (1) {
         c = getch();
-        g_cb->handleInput(c);
+        handleInput(c);
         erase();
         buf_updateScrollPosition(g_cb);
         b_cursesDraw(g_cb->b, 0, 0);
@@ -195,7 +290,7 @@ int main(int argc, char *argv[])
         if (g_cb->mode == VISUAL)
             colorSelection();
 	if (g_evalResult)
-	    mvaddstr(g_termRows - 1, 10, g_evalResult);
+	    mvaddstr(g_termRows - 2, 0, g_evalResult);
         b_cursesPositionCursor(g_cb->b, 0, 0);
         refresh();
     }

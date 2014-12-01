@@ -12,6 +12,7 @@ data Expr = Number Double
           | List [Expr]
           | Bool Bool
           | If Expr Expr Expr
+          | Begin [Expr]
           | Bottom
           | Lambda [String] Expr
           | Fn ([Expr] -> Expr)

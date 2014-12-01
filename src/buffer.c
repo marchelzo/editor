@@ -104,7 +104,7 @@ void b_cursesDraw(Buffer *b, int x, int y)
         b->line = b->line->prev;
         --b->currentLine;
     }
-    for (int i = 0; i < g_termRows - 1; ++i) {
+    for (int i = 0; i < g_termRows - 2; ++i) {
         move(y + i, x);
 
         /* DRAW LINE NUMBERS IF THEY ARE ENABLED */

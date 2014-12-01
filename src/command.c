@@ -48,7 +48,7 @@ void commandHandler(int c)
         default:
             appendToCommand(c);
         }
-        move(g_termRows - 1, 0);
+        move(g_termRows - 2, 0); /* We print the command on the second last line */
         clrtoeol();
         printw(":%s", g_command);
         refresh();
