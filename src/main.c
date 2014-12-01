@@ -208,11 +208,27 @@ static void handleInput(int c)
         len = 0;
         resetMappingMode();
     } else if (ps->length == 1) {
-        executeInput(ps->strings->mapValue);
-        free(buffer);
-        buffer = NULL;
-        len = 0;
-        resetMappingMode();
+        if (istrcmp(ps->strings->string, buffer) == 0) {
+            executeInput(ps->strings->mapValue);
+            free(buffer);
+            buffer = NULL;
+            len = 0;
+            resetMappingMode();
+        } else {
+            halfdelay(10);
+            int ch = getch();
+            nocbreak();
+            cbreak();
+            if (ch == ERR) {
+                executeInput(buffer);
+                free(buffer);
+                buffer = NULL;
+                len = 0;
+                resetMappingMode();
+            } else {
+                handleInput(ch);
+            }
+        }
     } else if (mv = sl_contains(ps, buffer)) {
         halfdelay(10);
         int ch = getch();
