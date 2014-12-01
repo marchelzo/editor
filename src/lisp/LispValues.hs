@@ -2,6 +2,7 @@ module LispValues where
 
 import Data.List (intersperse)
 import Text.Printf (printf)
+import Control.DeepSeq
 
 data Expr = Number Double
           | String String
@@ -13,6 +14,7 @@ data Expr = Number Double
           | Bool Bool
           | If Expr Expr Expr
           | Begin [Expr]
+          | Procedure Expr
           | Bottom
           | Lambda [String] Expr
           | Fn ([Expr] -> Expr)
@@ -32,7 +34,6 @@ instance Show Expr where
     show (Error e)    = e
     show (Quoted q)   = showQuoted q
     show _            = "<procedure>"
-
 
 showNum :: Double -> String
 showNum x

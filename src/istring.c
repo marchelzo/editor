@@ -38,7 +38,7 @@ int *ifromstr(const char *s)
 char *itostr(const int *s)
 {
     size_t len = istrlen(s);
-    char *res = malloc(len);
+    char *res = malloc(len + 1);
     for (size_t i = 0; i <= len; ++i)
         res[i] = s[i];
     return res;

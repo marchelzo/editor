@@ -7,6 +7,39 @@
 #include <stdio.h>
 #endif
 
+static void sl_removeIfExists(StringList *sl, const int *s)
+{
+    /* if the StringList is empty, we know it can't
+     * contain the string `s` so we return immediately
+     */
+    if (!sl->strings)
+        return;
+
+    /* special case for checking if `s` matches the
+     * first string in the StringList because in that
+     * case, we need to mutate the StringList, and not
+     * a StringListNode
+     */
+    if (istrcmp(sl->strings->string, s) == 0) {
+        sl->strings = sl->strings->next;
+        --sl->length;
+        return;
+    }
+
+    StringListNode *n = sl->strings->next;
+    StringListNode *prev = sl->strings;
+
+    while (n) {
+        if (istrcmp(n->string, s) == 0) {
+            prev->next = n->next;
+            --sl->length;
+            return;
+        }
+        prev = n;
+        n = n->next;
+    }
+}
+
 StringList *sl_new(void)
 {
     StringList *sl = malloc(sizeof(StringList));
@@ -28,6 +61,7 @@ StringList *sl_copy(StringList *other)
 
 void sl_add(StringList *sl, const int *s, const int *mapValue)
 {
+    sl_removeIfExists(sl, s);
     StringListNode *new = malloc(sizeof(StringListNode));
     new->string = s;
     new->mapValue = mapValue;

@@ -137,7 +137,7 @@ static void colorSelection(void)
     for (int i = g_cb->b->currentLine; i > firstLineToColor; --i)
         l = l->prev;
     for (unsigned int i = firstLineToColor; i <= g_cb->vs.endRow; ++i) {
-            mvchgat(i - g_cb->yScroll, xOff, gb_length(l->content) - g_cb->xScroll, (COLOR_PAIR(3)), 3, NULL);
+            mvchgat(i - g_cb->yScroll, xOff, 1 + gb_length(l->content) - g_cb->xScroll, (COLOR_PAIR(3)), 3, NULL);
             l = l->next;
     }
 }
@@ -208,7 +208,7 @@ static void handleInput(int c)
         len = 0;
         resetMappingMode();
     } else if (ps->length == 1) {
-        if (istrcmp(ps->strings->string, buffer) == 0) {
+        if (istrlen(ps->strings->string) == len) {
             executeInput(ps->strings->mapValue);
             free(buffer);
             buffer = NULL;

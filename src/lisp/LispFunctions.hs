@@ -97,7 +97,7 @@ bufNext [] = seq (unsafePerformIO nextBuffer) (Number 1)
 bufPrev :: [Expr] -> Expr
 bufPrev [] = seq (unsafePerformIO prevBuffer) (Number 1)
 
-bufNew [String s] = seq (force (unsafePerformIO (bufNew' (unsafePerformIO (newCString s))))) (Number 1)
+bufNew [String s] = force $ seq (force (unsafePerformIO (bufNew' (unsafePerformIO (newCString s))))) (Number 1)
 
 normalEval [String s] = seq (force (unsafePerformIO (normalEval' (unsafePerformIO (newCString s))))) (Number 1)
 

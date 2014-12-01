@@ -1,4 +1,4 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 module LispCore where
 
@@ -7,6 +7,7 @@ import Control.Monad.IO.Class
 import Data.IORef
 import qualified Data.Map.Strict as M
 import Control.Applicative
+import Control.DeepSeq
 
 import LispValues
 import LispFunctions
@@ -56,9 +57,9 @@ eval (Symbol s) = do
         _      -> Error ("reference to undefined symbol: `" ++ s ++ "`")
 eval (List (x:xs)) = do
     x'  <- eval x
-    xs' <- sequence $ map eval xs
+    xs' <- mapM eval xs
     apply x' xs'
-eval (Fn f) = return (Fn f)
+eval (Fn f) = force (return (force (Fn f)))
 eval (Lambda cs e) = return (Lambda cs e)
 eval (Define s e) = do
     ctx <- getContext
@@ -76,11 +77,17 @@ eval (Quoted (Number x)) = return (Number x)
 eval (Quoted e) = return (Quoted e)
 eval (Eval (Quoted e)) = eval e
 eval (Eval e)          = eval e
-eval (Begin es)        = mapM eval es >>= (return . last)
+eval (Begin es)        = force (foldr1 (>>) (force (map eval es)))
+eval (Procedure e)     = seq (force (eval e)) (return (Procedure e))
 eval e = return e
 
+evalProgram :: [Expr] -> IO Expr
+evalProgram [] = return (String "")
+evalProgram [e] = eval e
+evalProgram (e:es) = eval e >> evalProgram es
+
 apply :: Expr -> [Expr] -> IO Expr
-apply (Fn f) xs = return $ f xs
+apply (Fn f) xs = force (return $ force (f xs))
 apply (Lambda cs (Lambda ics e)) xs = do
     ctx <- getContext
     let lambdaContext = M.fromList $ zip cs xs
@@ -90,7 +97,6 @@ apply (Lambda cs (Lambda ics e)) xs = do
     putContext ctx
     return $ Lambda ics result
 
-
 apply (Lambda cs e) xs = do
     ctx <- getContext
     let lambdaContext = M.fromList $ zip cs xs
@@ -99,6 +105,8 @@ apply (Lambda cs e) xs = do
     result <- eval e
     putContext ctx
     return result
+
+apply (Procedure p) _ = eval p
 
 apply _ _ = return (Error "invalid expression")
 
@@ -115,7 +123,16 @@ partialEval (List xs) = do
 partialEval x = return x
 
 getContext :: IO Context
-getContext = liftIO (readIORef context)
+getContext = readIORef context
 
 putContext :: Context -> IO ()
-putContext ctx  = liftIO (writeIORef context ctx)
+putContext ctx  = writeIORef context ctx
+
+---------------------------------
+-- | NFData instance for Expr
+
+instance NFData (IO Expr) where
+    rnf e = seq (fmap eval e) ()
+
+instance NFData Expr where
+    rnf e = seq (unsafePerformIO (eval e)) ()

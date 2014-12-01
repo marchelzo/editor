@@ -1,6 +1,6 @@
 CC = gcc
 HC = ghc
-HSFLAGS = -optc -std=c11 -optc -O3 -optc -g -O3
+HSFLAGS = -optc -std=c11 -optc -O0 -optc -g -O0
 CFLAGS = -g -Wall -std=c11 -O0
 SOURCES := $(wildcard src/*.c)
 OBJECTS := $(patsubst %.c,%.o,${SOURCES})

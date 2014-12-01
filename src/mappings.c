@@ -32,7 +32,7 @@ static unsigned char isPrefix(const char *pre, const char *s)
 }
 
 static const size_t numEntities = 3;
-static struct entity entities[] = { { .replacement = '\n', .s = "<CR>" }
+static struct entity entities[] = { { .replacement = 13, .s = "<CR>" }
                                   , { .replacement = '\t', .s = "<Tab>" }
                                   , { .replacement = ' ',  .s = "<Space>" }
                                   };
@@ -41,11 +41,11 @@ static int *expandEntities(const char *str)
 {
     size_t len = strlen(str);
     size_t i = 0;
-    int *istr = malloc(sizeof(int) * len);
+    int *istr = malloc(sizeof(int) * (len + 1));
     char *s = (char *)str;
     while (*s) {
         while (*s != '<') {
-            if (!*s) return istr;
+            if (!*s) goto ret;
             istr[i++] = *s++;
         }
         for (size_t j = 0; j < numEntities; ++j) {
@@ -57,6 +57,8 @@ static int *expandEntities(const char *str)
             }
         }
     }
+ret:
+    istr[len] = 0;
     return istr;
 }
 

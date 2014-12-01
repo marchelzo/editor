@@ -99,12 +99,15 @@ parseFunctionDef :: Parser Expr
 parseFunctionDef = do
     _        <- string "(def ("
     fn       <- parseName
-    skipMany1 whitespace
+    skipMany whitespace
     captured <- sepBy (many1 letter) whitespace
-    _        <- string ") "
+    _        <- string ")"
+    skipMany1 whitespace
     expr     <- parseExpr
     _        <- char ')'
-    return $ sugaredLambda fn captured expr
+    return $ case captured of
+        [] -> (Procedure expr)
+        _  -> sugaredLambda fn captured expr
     where
         sugaredLambda f cap e = Define f (Lambda cap e)
 
