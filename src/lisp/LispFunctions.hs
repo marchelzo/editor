@@ -5,6 +5,7 @@ module LispFunctions where
 import Foreign.C.String
 import Foreign.C
 import System.IO.Unsafe (unsafePerformIO)
+import Unsafe.Coerce
 import Control.DeepSeq (force)
 import Data.Char (toLower, toUpper)
 
@@ -90,6 +91,9 @@ foreign import ccall "../lispbindings.h normal_map" nmap :: CString -> CString -
 foreign import ccall "../lispbindings.h insert_map" imap :: CString -> CString -> IO ()
 foreign import ccall "../lispbindings.h visual_map" vmap :: CString -> CString -> IO ()
 foreign import ccall "../lispbindings.h command_map" cmap :: CString -> CString -> IO ()
+foreign import ccall "../lispbindings.h get_char" lgetChar' :: IO CChar
+
+lgetChar _ = (String . force . return . unsafeCoerce . unsafePerformIO) lgetChar'
 
 bufNext :: [Expr] -> Expr
 bufNext [] = seq (unsafePerformIO nextBuffer) (Number 1)

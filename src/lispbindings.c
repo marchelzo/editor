@@ -75,3 +75,8 @@ void command_map(char *to, char *from)
     free(to);
     free(from);
 }
+
+char get_char(void)
+{
+    return getch();
+}

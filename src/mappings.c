@@ -53,12 +53,15 @@ static int *expandEntities(const char *str)
                 istr[i++] = entities[j].replacement;
                 while (*s != '>' && *s) ++s;
                 if (*s == '>') ++s;
-                break;
+                goto next;
             }
         }
+        istr[i++] = *s++;
+next:
+        ;
     }
 ret:
-    istr[len] = 0;
+    istr[i] = 0;
     return istr;
 }
 

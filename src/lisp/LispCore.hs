@@ -44,6 +44,7 @@ defaultContext = M.fromList [("+", Fn plus), ("-", Fn minus), ("*", Fn mult), ("
                             ,("normal",      Fn normalEval   )
                             ,("eval-buffer", Fn evalBuffer   )
                             ,("key-map",     Fn keyMap       )
+                            ,("get-char",    Fn lgetChar     )
                             ]
 
 eval :: Expr -> IO Expr
