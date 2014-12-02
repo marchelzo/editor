@@ -58,8 +58,8 @@ eval (Symbol s) = do
 eval (List (x:xs)) = do
     x'  <- eval x
     xs' <- mapM eval xs
-    apply x' xs'
-eval (Fn f) = force (return (force (Fn f)))
+    force (apply x' xs')
+eval (Fn f) = return (Fn f)
 eval (Lambda cs e) = return (Lambda cs e)
 eval (Define s e) = do
     ctx <- getContext
@@ -77,14 +77,15 @@ eval (Quoted (Number x)) = return (Number x)
 eval (Quoted e) = return (Quoted e)
 eval (Eval (Quoted e)) = eval e
 eval (Eval e)          = eval e
-eval (Begin es)        = force (foldr1 (>>) (force (map eval es)))
+eval (Begin es)        = evalProgram es
 eval (Procedure e)     = seq (force (eval e)) (return (Procedure e))
 eval e = return e
 
 evalProgram :: [Expr] -> IO Expr
 evalProgram [] = return (String "")
 evalProgram [e] = eval e
-evalProgram (e:es) = eval e >> evalProgram es
+evalProgram (e:es) = do e' <- (force (eval e))
+                        e' `seq` evalProgram es
 
 apply :: Expr -> [Expr] -> IO Expr
 apply (Fn f) xs = force (return $ force (f xs))
