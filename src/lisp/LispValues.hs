@@ -17,7 +17,7 @@ data Expr = Number Double
           | Procedure Expr
           | Bottom
           | Lambda [String] Expr
-          | Fn ([Expr] -> Expr)
+          | Fn ([Expr] -> IO Expr)
           | Error String
 
 instance Show Expr where

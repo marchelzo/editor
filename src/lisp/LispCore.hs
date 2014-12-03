@@ -89,7 +89,7 @@ evalProgram (e:es) = do e' <- (force (eval e))
                         e' `seq` evalProgram es
 
 apply :: Expr -> [Expr] -> IO Expr
-apply (Fn f) xs = force (return $ force (f xs))
+apply (Fn f) xs = f xs
 apply (Lambda cs (Lambda ics e)) xs = do
     ctx <- getContext
     let lambdaContext = M.fromList $ zip cs xs

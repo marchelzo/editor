@@ -11,72 +11,72 @@ import Data.Char (toLower, toUpper)
 
 import LispValues
 
-plus :: [Expr] -> Expr
-plus = Number . sum . map (\(Number x) -> x)
+plus :: [Expr] -> IO Expr
+plus = return . Number . sum . map (\(Number x) -> x)
 
-minus :: [Expr] -> Expr
-minus [Number x, Number y] = Number (x - y)
+minus :: [Expr] -> IO Expr
+minus [Number x, Number y] = return $ Number (x - y)
 
-mult :: [Expr] -> Expr
-mult = Number . product . map (\(Number x) -> x)
+mult :: [Expr] -> IO Expr
+mult = return . Number . product . map (\(Number x) -> x)
 
-divide :: [Expr] -> Expr
-divide [Number x, Number y] = Number (x / y)
+divide :: [Expr] -> IO Expr
+divide [Number x, Number y] = return $ Number (x / y)
 
-lispSqrt :: [Expr] -> Expr
-lispSqrt [Number x] = Number (sqrt x)
+lispSqrt :: [Expr] -> IO Expr
+lispSqrt [Number x] = return $ Number (sqrt x)
 
-lispExp :: [Expr] -> Expr
-lispExp [Number x] = Number (exp x)
+lispExp :: [Expr] -> IO Expr
+lispExp [Number x] = return $ Number (exp x)
 
-cons :: [Expr] -> Expr
-cons [x, Quoted (List xs)] = Quoted (List (x:xs))
+cons :: [Expr] -> IO Expr
+cons [x, Quoted (List xs)] = return $ Quoted (List (x:xs))
 
-car :: [Expr] -> Expr
-car [Quoted (List (x:_))] = x
+car :: [Expr] -> IO Expr
+car [Quoted (List (x:_))] = return x
 
-cdr :: [Expr] -> Expr
-cdr [Quoted (List (_:xs))] = Quoted (List xs)
-cdr e                      = Error ("error: cdr takes a pair, given: " ++ show e)
+cdr :: [Expr] -> IO Expr
+cdr [Quoted (List (_:xs))] = return $ Quoted (List xs)
+cdr e                      = return $ Error ("error: cdr takes a pair, given: " ++ show e)
 
-nil :: [Expr] -> Expr
-nil [(Quoted (List []))] = Bool True
-nil _                    = Bool False
+nil :: [Expr] -> IO Expr
+nil [(Quoted (List []))] = return $ Bool True
+nil _                    = return $ Bool False
 
-lispIf :: [Expr] -> Expr
-lispIf [(Bool False), _, x] = x
-lispIf [_, x, _]            = x
+lispIf :: [Expr] -> IO Expr
+lispIf [(Bool False), _, x] = return x
+lispIf [_, x, _]            = return x
 
-eq :: [Expr] -> Expr
-eq [Number x, Number y] = Bool (x == y)
-eq [String x, String y] = Bool (x == y)
-eq [_, _]               = Bool False
-eq _                    = Error "error: eq takes two arguments that"
+eq :: [Expr] -> IO Expr
+eq [Number x, Number y] = return $ Bool (x == y)
+eq [String x, String y] = return $ Bool (x == y)
+eq [_, _]               = return $ Bool False
+eq _                    = return $ Error "error: eq takes two arguments that"
 
-mkList :: [Expr] -> Expr
-mkList xs = Quoted (List xs)
+mkList :: [Expr] -> IO Expr
+mkList xs = return $ Quoted (List xs)
 
-lispAnd :: [Expr] -> Expr
-lispAnd [Bool p, Bool q] = Bool (p && q)
-lispAnd _                = Error "error: and requires two boolean arguments"
+lispAnd :: [Expr] -> IO Expr
+lispAnd [Bool p, Bool q] = return $ Bool (p && q)
+lispAnd _                = return $ Error "error: and requires two boolean arguments"
 
-lispOr :: [Expr] -> Expr
-lispOr [Bool p, Bool q] = Bool (p || q)
-lispOr _                = Error "error: or requires two boolean arguments"
+lispOr :: [Expr] -> IO Expr
+lispOr [Bool p, Bool q] = return $ Bool (p || q)
+lispOr _                = return $ Error "error: or requires two boolean arguments"
 
-strTake [Number x, String s] = String (take (round x) s)
+strTake [Number x, String s] = return $ String (take (round x) s)
 
-strDrop [Number x, String s] = String (drop (round x) s)
+strDrop [Number x, String s] = return $ String (drop (round x) s)
 
-substr [Number i, Number j, String s] = String ((take (round (j - i)) . drop (round i)) s)
+substr [Number i, Number j, String s] = return $ String ((take (round (j - i)) . drop (round i)) s)
 
-strCat [String s1, String s2] = String (s1 ++ s2)
+strCat [String s1, String s2] = return $ String (s1 ++ s2)
 
-strToUp [String s] = String (map toUpper s)
+strToUp [String s] = return $ String (map toUpper s)
 
-strToLow [String s] = String (map toLower s)
+strToLow [String s] = return $ String (map toLower s)
 
-strLen [String s] = (Number . fromIntegral . length) s
+strLen [String s] = return $ (Number . fromIntegral . length) s
 
 
 -- | Foreign C functions to mutate the editor state  |
@@ -93,27 +93,32 @@ foreign import ccall "../lispbindings.h visual_map" vmap :: CString -> CString -
 foreign import ccall "../lispbindings.h command_map" cmap :: CString -> CString -> IO ()
 foreign import ccall "../lispbindings.h get_char" lgetChar' :: IO CChar
 
-lgetChar _ = (String . force . return . unsafeCoerce . unsafePerformIO) lgetChar'
+lgetChar :: [Expr] -> IO Expr
+lgetChar _ = fmap ((String . return) . (unsafeCoerce :: CChar -> Char)) lgetChar'
 
-bufNext :: [Expr] -> Expr
-bufNext [] = seq (unsafePerformIO nextBuffer) (Number 1)
+bufNext :: [Expr] -> IO Expr
+bufNext [] = nextBuffer >> return Bottom
 
-bufPrev :: [Expr] -> Expr
-bufPrev [] = seq (unsafePerformIO prevBuffer) (Number 1)
+bufPrev :: [Expr] -> IO Expr
+bufPrev [] = prevBuffer >> return Bottom
 
-bufNew [String s] = seq (force (unsafePerformIO (bufNew' (unsafePerformIO (newCString s))))) (Number 1)
+bufNew [String s] = do cs <- newCString s
+                       bufNew' cs
+                       return Bottom
 
-normalEval [String s] = seq (force (unsafePerformIO (normalEval' (unsafePerformIO (newCString s))))) (Number 1)
+normalEval [String s] = do cs <- newCString s
+                           normalEval' cs
+                           return Bottom
 
-evalBuffer [] = seq (unsafePerformIO evalBuffer') (Number 1)
+evalBuffer [] = evalBuffer' >> return Bottom
 
-keyMap [(Quoted (Symbol m)), (String from), (String to)] = case m of
-    "normal-map" -> seq (force (unsafePerformIO (nmap (unsafePerformIO (newCString from))
-                                                      (unsafePerformIO (newCString to))))) (Number 1)
-    "command-map" -> seq (force (unsafePerformIO (cmap (unsafePerformIO (newCString from))
-                                                      (unsafePerformIO (newCString to))))) (Number 1)
-    "insert-map" -> seq (force (unsafePerformIO (imap (unsafePerformIO (newCString from))
-                                                      (unsafePerformIO (newCString to))))) (Number 1)
-    "visual-map" -> seq (force (unsafePerformIO (vmap (unsafePerformIO (newCString from))
-                                                      (unsafePerformIO (newCString to))))) (Number 1)
-
+keyMap [(Quoted (Symbol m)), (String from), (String to)] = do
+    cfrom <- newCString from
+    cto   <- newCString to
+    let f = case m of
+                "nmap" -> nmap
+                "cmap" -> cmap
+                "imap" -> imap
+                "vmap" -> vmap
+    f cfrom cto
+    return Bottom
