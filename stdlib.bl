@@ -1,0 +1,37 @@
+;; =========================++
+;;||                        ||
+;;|Standard Library Functions|
+;; --------------------------|
+;;||                        ||
+;; =========================++
+
+
+;; list index
+(def (index xs k)
+     (if (nil? xs)
+         Nil
+         (if (eq? k 0)
+             (car xs)
+             (index
+                 (cdr xs)
+                 (- k 1)))))
+
+;; map
+(def (map f xs)
+     (if (nil? xs)
+         Nil
+         (cons
+             (f (car xs))
+             (map f (cdr xs)))))
+
+
+
+;; filter
+(def (filter p xs)
+     (if (nil? xs)
+         Nil
+         (if (p (car xs))
+             (cons (car xs)
+                   (filter p (cdr xs)))
+             (filter p (cdr xs)))))
+
