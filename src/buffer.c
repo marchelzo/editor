@@ -517,7 +517,7 @@ char *b_cString(Buffer *b)
 	++lines;
 	length += gb_length(l2->content);
     }
-    char *result = malloc(length + lines + 1);
+    char *result = malloc(length + lines + 2);
     result[0] = '\0';
     char *temp = NULL;
     size_t pos = 0;
@@ -528,6 +528,7 @@ char *b_cString(Buffer *b)
 	result[pos++] = '\n';
 	free(temp);
 	l = l->next;
+        result[pos] = '\0';
     }
     result[pos] = '\0';
     return result;

@@ -51,7 +51,18 @@ eq :: [Expr] -> IO Expr
 eq [Number x, Number y] = return $ Bool (x == y)
 eq [String x, String y] = return $ Bool (x == y)
 eq [_, _]               = return $ Bool False
-eq _                    = return $ Error "error: eq takes two arguments that"
+eq _                    = return $ Error "error: invalid arguments to eq?"
+
+lt [Number x, Number y] = return $ Bool (x < y)
+
+gt [Number x, Number y] = return $ Bool (x > y)
+
+range [Number j, Number k, Number i] = let nums = map (Number . fromIntegral)  [(round j),(round k)..(round i)]
+                                           in return (Quoted (List nums))
+range [Number j, Number k] = let nums = map (Number . fromIntegral)  [(round j)..(round k)]
+                                           in return (Quoted (List nums))
+range [Number j] = let nums = map (Number . fromIntegral)  [0..(round j)]
+                                           in return (Quoted (List nums))
 
 mkList :: [Expr] -> IO Expr
 mkList xs = return $ Quoted (List xs)

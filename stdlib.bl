@@ -5,6 +5,8 @@
 ;;||                        ||
 ;; =========================++
 
+;; Identity function
+(def (id x) x)
 
 ;; list index
 (def (index xs k)
@@ -35,3 +37,40 @@
                    (filter p (cdr xs)))
              (filter p (cdr xs)))))
 
+;; fold
+(def (fold f k xs)
+     (if (nil? xs)
+         k
+         (fold f (f k (car xs)) (cdr xs))))
+(def (fold-one f xs)
+     (fold f (car xs) (cdr xs)))
+         
+;; max / min
+(def (max a b)
+     (if (gt? a b)
+         a
+         b))
+(def (min a b)
+     (if (lt? a b)
+         a
+         b))
+(def (maximum xs)
+     (fold-one max xs))
+(def (minimum xs)
+     (fold-one min xs))
+
+;; List functions
+(def (take k xs)
+     (if (or (eq? k 0)
+             (nil? xs))
+         Nil
+         (cons (car xs)
+               (take (- k 1) (cdr xs)))))
+(def (drop k xs)
+     (if (nil? xs)
+         Nil
+         (if (eq? k 0)
+             xs
+             (drop (- k 1) (cdr xs)))))
+(def (slice i j xs)
+     (take (- j i) (drop i xs)))

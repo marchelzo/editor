@@ -26,7 +26,10 @@ defaultContext = M.fromList [("+", Fn plus), ("-", Fn minus), ("*", Fn mult), ("
                             ,("cdr" ,        Fn cdr          )
                             ,("nil?",        Fn nil          )
                             ,("eq?" ,        Fn eq           )
+                            ,("gt?",         Fn gt           )
+                            ,("lt?",         Fn gt           )
                             ,("list",        Fn mkList       )
+                            ,("range",       Fn range        )
                             ,("or"  ,        Fn lispOr       )
                             ,("and" ,        Fn lispAnd      )
                             ,("sqrt",        Fn lispSqrt     )
@@ -77,7 +80,7 @@ eval (If cond a b) = do
 eval (Quoted (Number x)) = return (Number x)
 eval (Quoted e) = return (Quoted e)
 eval (Eval (Quoted e)) = eval e
-eval (Eval e)          = eval e
+eval (Eval e)          = eval e >>= eval
 eval (Begin es)        = evalProgram es
 eval (Procedure e)     = seq (force (eval e)) (return (Procedure e))
 eval e = return e

@@ -11,9 +11,9 @@ readExpr e = parse parseExpr "" e
 
 readProgram :: String -> Either ParseError [Expr]
 readProgram p = parse parseProgram "" (noComments p) where
-  noComments = unlines . filter (notComment) . lines
-  notComment (';':_) = False
-  notComment _ = True
+    noComments = unlines . filter (notComment) . lines
+    notComment (';':_) = False
+    notComment _ = True
 
 whitespace :: Parser Char
 whitespace = space <|> (char '\t') <|> newline
