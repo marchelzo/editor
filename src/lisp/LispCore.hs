@@ -27,7 +27,7 @@ defaultContext = M.fromList [("+", Fn plus), ("-", Fn minus), ("*", Fn mult), ("
                             ,("nil?",        Fn nil          )
                             ,("eq?" ,        Fn eq           )
                             ,("gt?",         Fn gt           )
-                            ,("lt?",         Fn gt           )
+                            ,("lt?",         Fn lt           )
                             ,("list",        Fn mkList       )
                             ,("range",       Fn range        )
                             ,("or"  ,        Fn lispOr       )

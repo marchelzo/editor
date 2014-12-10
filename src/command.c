@@ -50,7 +50,7 @@ void commandHandler(int c)
         }
         move(g_termRows - 2, 0); /* We print the command on the second last line */
         clrtoeol();
-        printw(":%s", g_command);
+        printw("%s%s", (g_command && *g_command == '(') ? "" : ":", g_command);
         refresh();
     } while ((c = getch()));
 }

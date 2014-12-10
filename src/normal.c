@@ -157,6 +157,51 @@ void normalHandler(int c)
     case 'v':
         buf_visualMode(g_cb);
         break;
+    case 't':
+        b_forwardUntil(g_cb->b, getch(), 0, 1);
+        b_cursorLeft(g_cb->b);
+        break;
+    case 'T':
+        b_backwardUntil(g_cb->b, getch(), 0, 1);
+        b_cursorRight(g_cb->b);
+        break;
+    case 'c': {
+        int c = getch();
+        switch (c) {
+        case 't': {
+            int c = getch();
+            size_t curCol = b_columnNumber(g_cb->b);
+            b_forwardUntil(g_cb->b, c, 0, 1);
+            while (b_columnNumber(g_cb->b) > curCol)
+                b_backspace(g_cb->b);
+            g_cb->mode = INSERT;
+            g_cb->handleInput = insertHandler;
+            break;
+        }
+        case 'f': {
+            int c = getch();
+            size_t curCol = b_columnNumber(g_cb->b);
+            b_forwardUntil(g_cb->b, c, 0, 1);
+            b_cursorRight(g_cb->b);
+            while (b_columnNumber(g_cb->b) > curCol)
+                b_backspace(g_cb->b);
+            g_cb->mode = INSERT;
+            g_cb->handleInput = insertHandler;
+            break;
+        }
+        case 'W': {
+            size_t curCol = b_columnNumber(g_cb->b);
+            b_forwardWord(g_cb->b);
+            b_cursorLeft(g_cb->b);
+            while (b_columnNumber(g_cb->b) > curCol)
+                b_backspace(g_cb->b);
+            g_cb->mode = INSERT;
+            g_cb->handleInput = insertHandler;
+            break;
+        }
+        }
+        break;
+    }
     }
     if (g_cb->mode == NORMAL && buf_isAtEOL(g_cb))
         buf_goToLastCharOnCurrentLine(g_cb);
