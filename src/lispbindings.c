@@ -6,6 +6,7 @@
 #include "lisp/EditorLisp_stub.h"
 #include "normal.h"
 #include "mappings.h"
+#include "gapbuffer.h"
 
 void evalLisp(char *code)
 {
@@ -79,4 +80,27 @@ void command_map(char *to, char *from)
 char get_char(void)
 {
     return getch();
+}
+
+size_t line_number(void)
+{
+    return g_cb->b->currentLine;
+}
+
+char *current_line(void)
+{
+    return gb_cString(g_cb->b->line->content);
+}
+
+char *get_nth_line(size_t n)
+{
+    LineNode *node = g_cb->b->line;
+    int k = n - g_cb->b->currentLine;
+    if (k > 0)
+        while (k-- > 0 && node->next)
+            node = node->next;
+    else if (k < 0)
+        while (k++ < 0 && node->prev)
+            node = node->prev;
+    return gb_cString(node->content);
 }

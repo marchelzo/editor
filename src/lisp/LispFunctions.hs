@@ -8,6 +8,8 @@ import System.IO.Unsafe (unsafePerformIO)
 import Unsafe.Coerce
 import Control.DeepSeq (force)
 import Data.Char (toLower, toUpper)
+import Control.Monad
+import qualified Text.Regex.Posix as Regex
 
 import LispValues
 
@@ -89,6 +91,8 @@ strToLow [String s] = return $ String (map toLower s)
 
 strLen [String s] = return $ (Number . fromIntegral . length) s
 
+matches [String s, String r] = return $ Bool (s Regex.=~ r :: Bool)
+
 
 -- | Foreign C functions to mutate the editor state  |
 ---------------------------------------------------- |
@@ -103,6 +107,17 @@ foreign import ccall "../lispbindings.h insert_map" imap :: CString -> CString -
 foreign import ccall "../lispbindings.h visual_map" vmap :: CString -> CString -> IO ()
 foreign import ccall "../lispbindings.h command_map" cmap :: CString -> CString -> IO ()
 foreign import ccall "../lispbindings.h get_char" lgetChar' :: IO CChar
+foreign import ccall "../lispbindings.h line_number" lineNumber' :: IO CSize
+foreign import ccall "../lispbindings.h current_line" currentLine' :: IO CString
+foreign import ccall "../lispbindings.h get_nth_line" getNthLine' :: CSize -> IO CString
+
+lineNumber _ = (Number . fromIntegral) `liftM` lineNumber'
+
+currentLine _ = String `liftM` (currentLine' >>= peekCString)
+
+getNthLine [Number x] = do cs <- getNthLine' (round x)
+                           s  <- peekCString cs
+                           return (String s)
 
 lgetChar :: [Expr] -> IO Expr
 lgetChar _ = fmap ((String . return) . (unsafeCoerce :: CChar -> Char)) lgetChar'
