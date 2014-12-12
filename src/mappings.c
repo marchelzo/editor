@@ -37,15 +37,16 @@ static unsigned char isPrefix(const char *pre, const char *s)
     return 1;
 }
 
-static const size_t numEntities = 8;
-static struct entity entities[] = { { .replacement = 13,    .s = "<CR>"    }
-                                  , { .replacement = '\t',  .s = "<Tab>"   }
-                                  , { .replacement = ' ',   .s = "<Space>" }
-                                  , { .replacement = 127,   .s = "<BS>"    }
-                                  , { .replacement = LEFT,  .s = "<Left>"  }
-                                  , { .replacement = RIGHT, .s = "<Right>" }
-                                  , { .replacement = UP,    .s = "<Up>"    }
-                                  , { .replacement = DOWN,  .s = "<Down>"  }
+static const size_t numEntities = 9;
+static struct entity entities[] = { { .replacement = 13,      .s = "<CR>"    }
+                                  , { .replacement = '\t',    .s = "<Tab>"   }
+                                  , { .replacement = ' ',     .s = "<Space>" }
+                                  , { .replacement = 127,     .s = "<BS>"    }
+                                  , { .replacement = LEFT,    .s = "<Left>"  }
+                                  , { .replacement = RIGHT,   .s = "<Right>" }
+                                  , { .replacement = UP,      .s = "<Up>"    }
+                                  , { .replacement = DOWN,    .s = "<Down>"  }
+                                  , { .replacement = 0,       .s = "<C-"     }
                                   };
 
 static int *expandEntities(const char *str)
@@ -61,6 +62,13 @@ static int *expandEntities(const char *str)
         }
         for (size_t j = 0; j < numEntities; ++j) {
             if (isPrefix(entities[j].s, s)) {
+                if (entities[j].replacement == 0) {
+                    /* special case, when we match "<C-" */
+                    while (*s != '>' && *s) ++s;
+                    istr[i++] = s[-1] - 96;
+                    if (*s == '>') ++s;
+                    goto next;
+                }
                 istr[i++] = entities[j].replacement;
                 while (*s != '>' && *s) ++s;
                 if (*s == '>') ++s;
