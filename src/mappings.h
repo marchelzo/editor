@@ -14,6 +14,6 @@ void mappings_newVisual(const char *to, const char *from);
 void mappings_newCommand(const char *to, const char *from);
 
 const StringList *mappings_getPossibilities(void);
-void mappings_filter(char c);
+void mappings_filter(int c);
 
 #endif

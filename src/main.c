@@ -193,7 +193,7 @@ static void handleInput(int c)
 
     const int *mv; /* used for lookup results */
 
-    if (!buffer) buffer = malloc(100);
+    if (!buffer) buffer = malloc(100 * sizeof(int));
 
     buffer[len++] = c;
     buffer[len]   = '\0';

@@ -14,5 +14,7 @@ void visual_map(char *, char *);
 void command_map(char *, char *);
 char get_char(void);
 size_t line_number(void);
+size_t column_number(void);
 char *current_line(void);
 char *get_nth_line(size_t);
+void indent_line(int);

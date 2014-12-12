@@ -8,6 +8,11 @@
 #include "mappings.h"
 #include "gapbuffer.h"
 
+static inline int min(int a, int b)
+{
+    return (a < b) ? a : b;
+}
+
 void evalLisp(char *code)
 {
   char *result = lispEval(code);
@@ -103,4 +108,26 @@ char *get_nth_line(size_t n)
         while (k++ < 0 && node->prev)
             node = node->prev;
     return gb_cString(node->content);
+}
+
+size_t column_number(void)
+{
+    return b_columnNumber(g_cb->b);
+}
+
+void indent_line(int n)
+{
+    GapBuffer *line = g_cb->b->line->content;
+    int initial_pos = gb_getPosition(line);
+    int dif = 0;
+    b_goToFirstNonWhitespaceCharOnLine(g_cb->b);
+    if (n > 0) {
+        while (n-- > 0)
+            ++dif, gb_insertChar(line, ' ');
+    } else {
+        size_t k = min(gb_leadingSpaces(line), -n);
+        gb_delete(line, k);
+        dif -= k;
+    }
+    gb_position(line, (size_t) initial_pos + dif);
 }

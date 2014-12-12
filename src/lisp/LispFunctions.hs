@@ -93,6 +93,11 @@ strLen [String s] = return $ (Number . fromIntegral . length) s
 
 matches [String s, String r] = return $ Bool (s Regex.=~ r :: Bool)
 
+matchesList [String s, String r] = (return . listToList . map (listToList . map String)) (s Regex.=~ r :: [[String]])
+
+listToList :: [Expr] -> Expr
+listToList xs = Quoted (List xs)
+
 
 -- | Foreign C functions to mutate the editor state  |
 ---------------------------------------------------- |
@@ -110,6 +115,12 @@ foreign import ccall "../lispbindings.h get_char" lgetChar' :: IO CChar
 foreign import ccall "../lispbindings.h line_number" lineNumber' :: IO CSize
 foreign import ccall "../lispbindings.h current_line" currentLine' :: IO CString
 foreign import ccall "../lispbindings.h get_nth_line" getNthLine' :: CSize -> IO CString
+foreign import ccall "../lispbindings.h column_number" columnNumber' :: IO CSize
+foreign import ccall "../lispbindings.h indent_line" indentLine' :: CInt -> IO ()
+
+indentLine [Number n] = indentLine' (round n) >> return Bottom
+
+columnNumber _ = (Number . fromIntegral) `liftM` columnNumber'
 
 lineNumber _ = (Number . fromIntegral) `liftM` lineNumber'
 
@@ -138,13 +149,15 @@ normalEval [String s] = do cs <- newCString s
 
 evalBuffer [] = evalBuffer' >> return Bottom
 
-keyMap [(Quoted (Symbol m)), (String from), (String to)] = do
-    cfrom <- newCString from
-    cto   <- newCString to
-    let f = case m of
-                "nmap" -> nmap
-                "cmap" -> cmap
-                "imap" -> imap
-                "vmap" -> vmap
-    f cfrom cto
-    return Bottom
+normalMap  [String fr, String to] = do [cFr, cTo] <- mapM newCString [fr,to]
+                                       nmap cFr cTo
+                                       return Bottom
+visualMap  [String fr, String to] = do [cFr, cTo] <- mapM newCString [fr,to]
+                                       vmap cFr cTo
+                                       return Bottom
+commandMap  [String fr, String to] = do [cFr, cTo] <- mapM newCString [fr,to]
+                                        cmap cFr cTo
+                                        return Bottom
+insertMap  [String fr, String to] = do [cFr, cTo] <- mapM newCString [fr,to]
+                                       imap cFr cTo
+                                       return Bottom

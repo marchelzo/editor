@@ -1,5 +1,11 @@
 #include "stringlist.h"
 #include <string.h>
+#include <ncurses.h>
+
+#define RIGHT 261
+#define LEFT 260
+#define UP 259
+#define DOWN 258
 
 /* the number of characters entered so far */
 static size_t charIndex = 0;
@@ -31,10 +37,15 @@ static unsigned char isPrefix(const char *pre, const char *s)
     return 1;
 }
 
-static const size_t numEntities = 3;
-static struct entity entities[] = { { .replacement = 13, .s = "<CR>" }
-                                  , { .replacement = '\t', .s = "<Tab>" }
-                                  , { .replacement = ' ',  .s = "<Space>" }
+static const size_t numEntities = 8;
+static struct entity entities[] = { { .replacement = 13,    .s = "<CR>"    }
+                                  , { .replacement = '\t',  .s = "<Tab>"   }
+                                  , { .replacement = ' ',   .s = "<Space>" }
+                                  , { .replacement = 127,   .s = "<BS>"    }
+                                  , { .replacement = LEFT,  .s = "<Left>"  }
+                                  , { .replacement = RIGHT, .s = "<Right>" }
+                                  , { .replacement = UP,    .s = "<Up>"    }
+                                  , { .replacement = DOWN,  .s = "<Down>"  }
                                   };
 
 static int *expandEntities(const char *str)

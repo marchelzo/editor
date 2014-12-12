@@ -1,12 +1,22 @@
-;;+=========================++
-;;||                        ||
-;;|Standard Library Functions|
-;;|--------------------------|
-;;||                        ||
-;;+=========================++
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                    ;;
+;;    BrokenLisp Standard Library     ;;
+;;                                    ;;
+;;          Bradley Garagan           ;;
+;;                                    ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;; Identity function
 (def (id x) x)
+
+;; various car / cdr compositions
+(def (caar xs) (car (car xs)))
+(def (cdar xs) (cdr (car xs)))
+(def (cadr xs) (car (cdr xs)))
+(def (caaar xs) (car (car (car xs))))
+(def (cddr xs) (cdr (cdr xs)))
+(def (cdddr xs) (cdr (cdr (cdr xs))))
 
 ;; list index
 (def (index xs k)
@@ -74,3 +84,22 @@
              (drop (- k 1) (cdr xs)))))
 (def (slice i j xs)
      (take (- j i) (drop i xs)))
+
+;; any / all
+(def (any? f xs) (fold-one or (map f xs)))
+(def (all? f xs) (fold-one and (map f xs)))
+
+;; matches after / before point
+(def (match-after-pt? r)
+     (matches?
+        (strdrop (column-number) (current-line))
+        (strcat "^" r)))
+
+(def (match-before-pt? r)
+     (matches?
+        (strtake (column-number) (current-line))
+        (strcat r "$")))
+
+(def (set-indent n)
+     (begin (indent-line -1000)
+            (indent-line n)))

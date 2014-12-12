@@ -8,6 +8,7 @@
 #include "editbuffer.h"
 #include "stringlist.h"
 #include "hashmap.h"
+#include "config.h"
 
 /* current buffer global */
 extern EditBuffer *g_cb;
@@ -37,7 +38,7 @@ extern HashMap *g_commandMap;
 /* result of the last evaluated lisp expr */
 extern char *g_evalResult;
 
-/* StringList that contains all of the mappings for the current editor mode */
-extern StringList *keyMappings;
+/* default config */
+
 
 #endif
