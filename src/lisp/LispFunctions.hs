@@ -10,6 +10,7 @@ import Control.DeepSeq (force)
 import Data.Char (toLower, toUpper)
 import Control.Monad
 import qualified Text.Regex.Posix as Regex
+import Data.Char (chr,ord)
 
 import LispValues
 
@@ -24,6 +25,9 @@ mult = return . Number . product . map (\(Number x) -> x)
 
 divide :: [Expr] -> IO Expr
 divide [Number x, Number y] = return $ Number (x / y)
+
+modulo :: [Expr] -> IO Expr
+modulo [Number x, Number y] = return $ Number (fromIntegral (round x `mod` round y))
 
 lispSqrt :: [Expr] -> IO Expr
 lispSqrt [Number x] = return $ Number (sqrt x)
@@ -77,6 +81,9 @@ lispOr :: [Expr] -> IO Expr
 lispOr [Bool p, Bool q] = return $ Bool (p || q)
 lispOr _                = return $ Error "error: or requires two boolean arguments"
 
+lOrd [String s] = return $ Number (fromIntegral (ord (head s)))
+lChr [Number k] = return $ String (return (chr (round k)))
+
 strTake [Number x, String s] = return $ String (take (round x) s)
 
 strDrop [Number x, String s] = return $ String (drop (round x) s)
@@ -117,6 +124,9 @@ foreign import ccall "../lispbindings.h current_line" currentLine' :: IO CString
 foreign import ccall "../lispbindings.h get_nth_line" getNthLine' :: CSize -> IO CString
 foreign import ccall "../lispbindings.h column_number" columnNumber' :: IO CSize
 foreign import ccall "../lispbindings.h indent_line" indentLine' :: CInt -> IO ()
+foreign import ccall "../lispbindings.h go_to_col" goToCol' :: CSize -> IO ()
+
+goToCol [Number x] = goToCol' (round x) >> return Bottom
 
 indentLine [Number n] = indentLine' (round n) >> return Bottom
 

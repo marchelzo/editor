@@ -103,3 +103,19 @@
 (def (set-indent n)
      (begin (indent-line -1000)
             (indent-line n)))
+
+(def (backspace n)
+     (if (eq? n 0)
+         Nil
+         (begin (normal "i<BS>jkl")
+                (backspace (- n 1)))))
+
+(def (bs x)
+     (if (match-before-pt? " {4}")
+         (backspace 4)
+         (backspace 1)))
+
+(def (get-line s c)
+     (if (eq? c (chr 13))
+         s
+         (get-line (strcat s c) (get-char))))    

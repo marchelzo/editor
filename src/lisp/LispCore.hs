@@ -20,7 +20,7 @@ context = unsafePerformIO (newIORef defaultContext)
 type Context = M.Map String Expr
 
 
-defaultContext = M.fromList [("+", Fn plus), ("-", Fn minus), ("*", Fn mult), ("/", Fn divide)
+defaultContext = M.fromList [("+", Fn plus), ("-", Fn minus), ("*", Fn mult), ("/", Fn divide), ("%", Fn modulo)
                             ,("cons",          Fn cons         )
                             ,("car" ,          Fn car          )
                             ,("cdr" ,          Fn cdr          )
@@ -34,6 +34,8 @@ defaultContext = M.fromList [("+", Fn plus), ("-", Fn minus), ("*", Fn mult), ("
                             ,("and" ,          Fn lispAnd      )
                             ,("sqrt",          Fn lispSqrt     )
                             ,("exp" ,          Fn lispExp      )
+                            ,("ord",           Fn lOrd         )
+                            ,("chr",           Fn lChr         )
                             ,("strlen",        Fn strLen       )
                             ,("strtake",       Fn strTake      )
                             ,("substr",        Fn substr       )
@@ -58,6 +60,7 @@ defaultContext = M.fromList [("+", Fn plus), ("-", Fn minus), ("*", Fn mult), ("
                             ,("matches",       Fn matchesList  )
                             ,("column-number", Fn columnNumber )
                             ,("indent-line",   Fn indentLine   )
+                            ,("go-to-col",     Fn goToCol      )
                             ]
 
 eval :: Expr -> IO Expr

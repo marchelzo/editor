@@ -7,6 +7,7 @@
 #include "normal.h"
 #include "mappings.h"
 #include "gapbuffer.h"
+#include "istring.h"
 
 static inline int min(int a, int b)
 {
@@ -44,7 +45,17 @@ void new_buffer(char *s)
 
 void normal_eval(char *s)
 {
-    normalModeEval(s);
+    int *str = expandEntities(s);
+    int *k = str;
+    while (*k) {
+        if (*k == KEY_BACKSPACE)
+            *k = 127;
+        ++k;
+    }
+    char *newS = itostr(str);
+    normalModeEval(newS);
+    free(str);
+    free(s);
 }
 
 void eval_buffer(void)
@@ -130,4 +141,9 @@ void indent_line(int n)
         dif -= k;
     }
     gb_position(line, (size_t) initial_pos + dif);
+}
+
+void go_to_col(size_t n)
+{
+    b_goToColumn(g_cb->b, n);
 }

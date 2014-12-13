@@ -7,16 +7,16 @@ import Data.Char (isLower)
 import LispValues
 
 readExpr :: String -> Either ParseError Expr
-readExpr e = parse parseExpr "" e
+readExpr = parse parseExpr ""
 
 readProgram :: String -> Either ParseError [Expr]
 readProgram p = parse parseProgram "" (noComments p) where
-    noComments = unlines . filter (notComment) . lines
+    noComments = unlines . filter notComment . lines
     notComment (';':_) = False
     notComment _ = True
 
 whitespace :: Parser Char
-whitespace = space <|> (char '\t') <|> newline
+whitespace = space <|> char '\t' <|> newline
 
 parseProgram :: Parser [Expr]
 parseProgram = skipMany whitespace >> endBy parseExpr (many whitespace)
@@ -45,7 +45,7 @@ parseNumber = do
 
 parseSymbol :: Parser Expr
 parseSymbol = do
-              sym <- parseName <|> fmap (:[]) (oneOf "+*/-")
+              sym <- parseName <|> fmap (:[]) (oneOf "+*/-%")
               return $ Symbol sym
 
 parseString :: Parser Expr
@@ -106,7 +106,7 @@ parseFunctionDef = do
     expr     <- parseExpr
     _        <- char ')'
     return $ case captured of
-        [] -> (Procedure expr)
+        [] -> Procedure expr
         _  -> sugaredLambda fn captured expr
     where
         sugaredLambda f cap e = Define f (Lambda cap e)

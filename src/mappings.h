@@ -16,4 +16,6 @@ void mappings_newCommand(const char *to, const char *from);
 const StringList *mappings_getPossibilities(void);
 void mappings_filter(int c);
 
+int *expandEntities(const char *s);
+
 #endif

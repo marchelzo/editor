@@ -41,7 +41,7 @@ static const size_t numEntities = 9;
 static struct entity entities[] = { { .replacement = 13,      .s = "<CR>"    }
                                   , { .replacement = '\t',    .s = "<Tab>"   }
                                   , { .replacement = ' ',     .s = "<Space>" }
-                                  , { .replacement = 127,     .s = "<BS>"    }
+                                  , { .replacement = KEY_BACKSPACE, .s = "<BS>"    }
                                   , { .replacement = LEFT,    .s = "<Left>"  }
                                   , { .replacement = RIGHT,   .s = "<Right>" }
                                   , { .replacement = UP,      .s = "<Up>"    }
@@ -49,7 +49,7 @@ static struct entity entities[] = { { .replacement = 13,      .s = "<CR>"    }
                                   , { .replacement = 0,       .s = "<C-"     }
                                   };
 
-static int *expandEntities(const char *str)
+int *expandEntities(const char *str)
 {
     size_t len = strlen(str);
     size_t i = 0;
