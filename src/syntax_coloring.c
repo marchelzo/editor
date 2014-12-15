@@ -9,23 +9,25 @@
 
 static int word_color(char *w, size_t len)
 {
-    struct slre_cap caps[10];
-    if (slre_match("case", w, len, caps, 10, 0) > 0)
+    if (slre_match("case", w, len, NULL, 0, 0) > 0)
         return 2;
     else return 1;
 }
 
 static void highlight_line(char *l, size_t len, int line_num)
 {
-    int word_length = 0;
+    int colOffset = (g_cb->conf->lineNumbers) ? 5 : 0;
+    int word_length = 1;
     int col = 0;
-    while (*l) {
-        while (*l && *++l != ' ') ++word_length;
-        int color = word_color(l, word_length - 1);
-        mvchgat(line_num, col, word_length, A_NORMAL, color, NULL);
-        while (*l && *l++ == ' ') ++col;
+    char *word_begin = l;
+    char *word_end = l;
+    while (*word_end) {
+        while (*word_end && *++word_end != ' ') ++word_length;
+        int color = word_color(word_begin, word_length);
+        mvchgat(line_num, col + colOffset, word_length, A_BOLD, color, NULL);
         col += word_length;
-        word_length = 0;
+        word_length = 1;
+        word_begin = word_end;
     }
 }
 
