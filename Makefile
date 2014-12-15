@@ -7,7 +7,7 @@ OBJECTS := $(patsubst %.c,%.o,${SOURCES})
 HSMODULES := src/lisp/EditorLisp src/lisp/Parser src/lisp/LispCore src/lisp/LispValues src/lisp/LispFunctions
 
 edit : lisp ${OBJECTS}
-	$(HC) --make -no-hs-main $(HSFLAGS) -o edit $(SOURCES) $(HSMODULES) -lncurses
+	$(HC) --make -no-hs-main $(HSFLAGS) -o edit src/slre/slre.c $(SOURCES) $(HSMODULES) -lncurses
 %.o : %.c
 	$(HC) -c $(HSFLAGS) $< -o $@
 lisp :

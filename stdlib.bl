@@ -11,11 +11,11 @@
 (def (id x) x)
 
 ;; various car / cdr compositions
-(def (caar xs) (car (car xs)))
-(def (cdar xs) (cdr (car xs)))
-(def (cadr xs) (car (cdr xs)))
+(def (caar xs)  (car (car xs)))
+(def (cdar xs)  (cdr (car xs)))
+(def (cadr xs)  (car (cdr xs)))
 (def (caaar xs) (car (car (car xs))))
-(def (cddr xs) (cdr (cdr xs)))
+(def (cddr xs)  (cdr (cdr xs)))
 (def (cdddr xs) (cdr (cdr (cdr xs))))
 
 ;; list index
@@ -119,3 +119,10 @@
      (if (eq? c (chr 13))
          s
          (get-line (strcat s c) (get-char))))    
+
+(def (insert n)
+     (if (eq? n 0)
+         Nil
+         (begin
+             (normal (strcat "i" (get-line "" "")))
+             (insert (- n 1)))))

@@ -16,6 +16,7 @@
 #include "mappings.h"
 #include "lisp/EditorLisp_stub.h"
 #include "istring.h"
+#include "syntax_coloring.h"
 
 /* globals */
 EditBuffer *g_cb = NULL;
@@ -307,6 +308,7 @@ int main(int argc, char *argv[])
             colorSelection();
 	if (g_evalResult)
 	    mvaddstr(g_termRows - 2, 0, g_evalResult);
+        highlight();
         b_cursesPositionCursor(g_cb->b, 0, 0);
         refresh();
     }
