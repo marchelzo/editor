@@ -290,6 +290,11 @@ int main(int argc, char *argv[])
     init_pair(2, COLOR_GREEN, -1); /* green on default bg */
     init_pair(3, COLOR_WHITE, COLOR_BLUE); /* white on blue (selected text) */
 
+    /* red on solarized bg */
+    init_color(12, 219 * 4, 51 * 4, 47 * 4);
+    init_color(10, 0, 43 * 4, 54 * 4);
+    init_pair(4, 12, 10);
+
     /* get the terminal dimensions */
     getmaxyx(stdscr, g_termRows, g_termCols);
 
