@@ -399,7 +399,7 @@ void b_deleteUntilEOL(Buffer *b)
 void b_goToLine(Buffer *b, size_t line)
 {
     if (line > b->currentLine) {
-        while (b->currentLine < line && b->currentLine < b->numLines) {
+        while (b->currentLine < line && b->currentLine < b->numLines - 1) {
             b_cursorDown(b);
         }
     } else {
