@@ -23,7 +23,7 @@ extern int g_numBuffers;
 extern char *g_msg;
 
 /* last command run in command mode */
-extern char *g_command;
+extern GapBuffer *g_command;
 
 /* terminal dimensions as interpreted by ncurses */
 extern int g_termCols;

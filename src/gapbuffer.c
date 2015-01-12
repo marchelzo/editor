@@ -194,3 +194,12 @@ unsigned char gb_leadingSpaces(GapBuffer *gb)
     }
     return indent;
 }
+
+void gb_clear(GapBuffer* gb)
+{
+    gb->fsz = 0;
+    gb->ssz = 0;
+
+    gb->fst = malloc(1);
+    gb->snd = malloc(1);
+}

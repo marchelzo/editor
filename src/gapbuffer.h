@@ -53,6 +53,8 @@ char gb_nextChar(GapBuffer*);
 
 void gb_deleteUntilEOL(GapBuffer*);
 
+void gb_clear(GapBuffer*);
+
 unsigned char gb_leadingSpaces(GapBuffer*);
 
 #endif

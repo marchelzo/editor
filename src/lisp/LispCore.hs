@@ -61,6 +61,7 @@ defaultContext = M.fromList [("+", Fn plus), ("-", Fn minus), ("*", Fn mult), ("
                             ,("column-number", Fn columnNumber )
                             ,("indent-line",   Fn indentLine   )
                             ,("go-to-col",     Fn goToCol      )
+                            ,("buf-num-lines", Fn bufNumLines  )
                             ]
 
 eval :: Expr -> IO Expr

@@ -19,3 +19,4 @@ char *current_line(void);
 char *get_nth_line(size_t);
 void indent_line(int);
 void go_to_col(size_t);
+size_t buf_num_lines(void);

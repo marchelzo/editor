@@ -118,11 +118,20 @@
 (def (get-line s c)
      (if (eq? c (chr 13))
          s
-         (get-line (strcat s c) (get-char))))    
+         (get-line (strcat s c) (get-char))))
 
 (def (insert n)
      (if (eq? n 0)
          Nil
          (begin
-             (normal (strcat "i" (get-line "" "")))
+             (normal (strcat "i"
+                     (strcat (get-line "" "") (strcat (chr 13) "jk"))))
              (insert (- n 1)))))
+;; garbage
+
+(def (search s)
+     (if (eq? (line-number) (buf-num-lines))
+         Nil
+         (if (matches? (current-line) s)
+             (begin (normal "zz") Nil)
+             (begin (normal "j") (search s)))))

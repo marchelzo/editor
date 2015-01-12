@@ -10,7 +10,6 @@
 #include "strdup.h"
 #include "lispbindings.h"
 
-static void appendToCommand(char c);
 static void backspaceCommand(void);
 
 void commandHandler(int c)
@@ -21,14 +20,19 @@ void commandHandler(int c)
         case 27:
             g_cb->mode = NORMAL;
             g_cb->handleInput = normalHandler;
-            free(g_command);
             return;
         case 10:
         case 13: {
             /* we save a pointer to the _current_ contents of g_cb, because running the command may modify g_cb (e.g. opening a new buffer) */
             EditBuffer *b = g_cb;
-            runCommand(g_command);
-            free(g_command);
+            /* clear the old eval result / error message */
+            free(g_evalResult);
+            g_evalResult = NULL;
+            /* make a temp C string to call runCommand */
+            char *com = gb_cString(g_command);
+            runCommand(com);
+            gb_clear(g_command);
+            free(com);
             /* if the command left us in command mode, then go to normal mode */
             if (b && b->mode == COMMAND) {
                 b->mode = NORMAL;
@@ -36,6 +40,16 @@ void commandHandler(int c)
             }
             return;
         }
+        case 258: /* down  */
+            break;
+        case 259: /* up    */
+            break;
+        case 260: /* left  */
+            gb_moveLeft(g_command, 1);
+            break;
+        case 261: /* right */
+            gb_moveRight(g_command, 1);
+            break;
         case 9:
             break;
         case KEY_BACKSPACE:
@@ -46,25 +60,22 @@ void commandHandler(int c)
                 return;
             break;
         default:
-            appendToCommand(c);
+            gb_insertChar(g_command, c);
         }
         move(g_termRows - 2, 0); /* We print the command on the second last line */
         clrtoeol();
-        printw("%s%s", (g_command && *g_command == '(') ? "" : ":", g_command);
+        char *commandString = gb_cString(g_command); /* make a temporary copy of g_command as a char* */
+        unsigned char showColon = commandString[0] != '(';
+        printw("%s%s", showColon ? ":" : "", commandString);
+        move(g_termRows - 2, gb_getPosition(g_command) + showColon);
+        free(commandString); /* free the temporary char* copy of g_command */
         refresh();
     } while ((c = getch()));
 }
 
-static void appendToCommand(char c)
-{
-    size_t len = strlen(g_command);
-    g_command = realloc(g_command, len + 2);
-    g_command[len] = c;
-    g_command[len + 1] = '\0';
-}
-
 void runCommand(char *com)
 {
+    /* make a copy of the command as a C string */
     /* if the command is lisp code, we run it through the interpreter */
     if (*com == '(') {
 	evalLisp(com);
@@ -81,18 +92,20 @@ void runCommand(char *com)
 
     /* run the command with the arguments parsed */
     a(c->argc, c->argv);
+
+    /* free the temporary C string */
+    free(com);
 }
 
 static void backspaceCommand(void)
 {
-    size_t len = strlen(g_command);
+    size_t len = gb_length(g_command);
     if (len == 0) {
         g_cb->mode = NORMAL;
         g_cb->handleInput = normalHandler;
         return;
     }
-    g_command = realloc(g_command, len);
-    g_command[len - 1] = '\0';
+    gb_delete(g_command, 1);
 }
 
 Command* parseCommand(char *str)

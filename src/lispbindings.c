@@ -147,3 +147,8 @@ void go_to_col(size_t n)
 {
     b_goToColumn(g_cb->b, n);
 }
+
+size_t buf_num_lines(void)
+{
+    return g_cb->b->numLines;
+}

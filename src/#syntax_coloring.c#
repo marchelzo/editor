@@ -1,0 +1,51 @@
+#include "syntax_coloring.h"
+#include "slre/slre.h"
+#include "state.h"
+#include "buffer.h"
+#include "editbuffer.h"
+#include "gapbuffer.h"
+
+#include <ncurses.h>
+
+#define NONE 0
+#define STRING 1
+#define COMMENT 2
+#define CHAR 3
+
+/* the value of this variable will reflect our status (in/not in) concerning
+ * comments, string literals, and character constants
+ */
+static unsigned char inside = NONE;
+
+static int word_color(char *w, size_t len)
+{
+    struct slre_cap caps[10];
+    if (slre_match("case", w, len, caps, 10, 0) > 0)
+        return 2;
+    else return 1;
+}
+
+static void highlight_line(char *l, size_t len, int line_num)
+{
+    int word_length = 0;
+    int col = 0;
+    while (*l) {
+	while (advance_char(l)) ++word_length;
+        int color = word_color(l, word_length - 1);
+        mvchgat(line_num, col, word_length, A_NORMAL, color, NULL);
+        while (*l && *l++ == ' ') ++col;
+        col += word_length;
+        word_length = 0;
+    }
+}
+
+void highlight(void)
+{
+    size_t initial_line = g_cb->b->currentLine;
+    for (size_t i = 0; i < g_termRows - 2; ++i) {
+        b_goToLine(g_cb->b, i + g_cb->yScroll);
+        move(i,0);
+        highlight_line(gb_cString(g_cb->b->line->content), gb_length(g_cb->b->line->content), i);
+    }
+    b_goToLine(g_cb->b, initial_line);
+}

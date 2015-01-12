@@ -3,6 +3,7 @@
 #include <string.h>
 #include <HsFFI.h>
 
+#include "gapbuffer.h"
 #include "buffer.h"
 #include "state.h"
 #include "mode.h"
@@ -23,7 +24,7 @@ EditBuffer *g_cb = NULL;
 EditBuffer **g_bufList = NULL;
 int g_numBuffers;
 char *g_msg = NULL;
-char *g_command = NULL;
+GapBuffer *g_command = NULL;
 int g_termRows, g_termCols;
 StringList *g_commandList = NULL;
 HashMap *g_commandMap = NULL;
@@ -273,8 +274,7 @@ int main(int argc, char *argv[])
     hm_insert(g_commandMap, "e", bufedit);
     hm_insert(g_commandMap, "bnext", bufnext);
     hm_insert(g_commandMap, "bprev", bufprev);
-    g_command = malloc(1);
-    g_command[0] = '\0';
+    g_command = gb_new();
 
     initscr();
     clear();
@@ -302,19 +302,38 @@ int main(int argc, char *argv[])
     b_cursesDraw(g_cb->b, 0, 0);
     b_cursesPositionCursor(g_cb->b, 0, 0);
     while (1) {
+
         c = getch();
         handleInput(c);
+
+        /* clear the screen */
         erase();
+
+        /* update the terminal dimensions in case they have changed */
+        getmaxyx(stdscr, g_termRows, g_termCols);
+
+        /* make sure we draw the right part of the buffer */
         buf_updateScrollPosition(g_cb);
+
+        /* draw each line of the buffer that is inside of our scroll region */
         b_cursesDraw(g_cb->b, 0, 0);
+        
         if (g_cb->mode != COMMAND)
             drawOpenBufferNames();
+
         if (g_cb->mode == VISUAL)
             colorSelection();
+
 	if (g_evalResult)
 	    mvaddstr(g_termRows - 2, 0, g_evalResult);
+
+        /* apply syntax highlighting (work in progress) */
         highlight();
+
+        /* put the cursor back where it should be (the drawing functions move the cursor) */
         b_cursesPositionCursor(g_cb->b, 0, 0);
+
+        /* update the display so that it reflects the in-memory representation of the window */
         refresh();
     }
     return 0;

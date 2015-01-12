@@ -99,8 +99,10 @@ strToLow [String s] = return $ String (map toLower s)
 strLen [String s] = return $ (Number . fromIntegral . length) s
 
 matches [String s, String r] = return $ Bool (s Regex.=~ r :: Bool)
+matches _                    = return $ Error "bad arguments to matches?"
 
 matchesList [String s, String r] = (return . listToList . map (listToList . map String)) (s Regex.=~ r :: [[String]])
+matchesList _                    = return $ Error "bad arguments to matches"
 
 listToList :: [Expr] -> Expr
 listToList xs = Quoted (List xs)
@@ -125,14 +127,20 @@ foreign import ccall "../lispbindings.h get_nth_line" getNthLine' :: CSize -> IO
 foreign import ccall "../lispbindings.h column_number" columnNumber' :: IO CSize
 foreign import ccall "../lispbindings.h indent_line" indentLine' :: CInt -> IO ()
 foreign import ccall "../lispbindings.h go_to_col" goToCol' :: CSize -> IO ()
+foreign import ccall "../lispbindings.h buf_num_lines" bufNumLines' :: IO CSize
+
+bufNumLines _ = (Number . fromIntegral) `liftM` bufNumLines'
 
 goToCol [Number x] = goToCol' (round x) >> return Bottom
+goToCol _          = return $ Error "go-to-col requires an integer argument"
 
 indentLine [Number n] = indentLine' (round n) >> return Bottom
+indentLine _          = return $ Error "indent-line requires an integer argument"
 
 columnNumber _ = (Number . fromIntegral) `liftM` columnNumber'
 
-lineNumber _ = (Number . fromIntegral) `liftM` lineNumber'
+-- | Add one, because in the C implementation, the lines are 0 indexed, but visually, they begin at 1
+lineNumber _ = (Number . (+1) . fromIntegral) `liftM` lineNumber'
 
 currentLine _ = String `liftM` (currentLine' >>= peekCString)
 

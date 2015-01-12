@@ -229,7 +229,6 @@ void buf_commandMode(EditBuffer *b)
 /* This is bad and needs to die */
 void buf_drawCommandLine(EditBuffer *b)
 {
-    g_command = calloc(1,1);
     mvaddch(g_termRows - 2, 0, ':');
 }
 
