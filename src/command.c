@@ -92,9 +92,6 @@ void runCommand(char *com)
 
     /* run the command with the arguments parsed */
     a(c->argc, c->argv);
-
-    /* free the temporary C string */
-    free(com);
 }
 
 static void backspaceCommand(void)
