@@ -54,6 +54,10 @@
          (fold f (f k (car xs)) (cdr xs))))
 (def (fold-one f xs)
      (fold f (car xs) (cdr xs)))
+(def (fold-one-default x f xs)
+     (if (nil? xs)
+         x
+         (fold f (car xs) (cdr xs))))
          
 ;; max / min
 (def (max a b)
@@ -127,11 +131,24 @@
              (normal (strcat "i"
                      (strcat (get-line "" "") (strcat (chr 13) "jk"))))
              (insert (- n 1)))))
-;; garbage
 
-(def (search s)
+(def (search-helper s)
      (if (eq? (line-number) (buf-num-lines))
          Nil
          (if (matches? (current-line) s)
              (begin (normal "zz") Nil)
              (begin (normal "j") (search s)))))
+             
+(def (replicate n x)
+     (if (eq? n 0)
+         Nil
+         (cons x (replicate (- n 1) x))))
+         
+(def (go-to-line n)
+     (if (lt? n 1) Nil
+     (normal (strcat
+                 "gg"
+                 (strcat (fold-one-default "" strcat
+                                              (replicate (- n 1) "j"))
+                         "zz")))))
+

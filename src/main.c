@@ -327,8 +327,6 @@ int main(int argc, char *argv[])
 	if (g_evalResult)
 	    mvaddstr(g_termRows - 2, 0, g_evalResult);
 
-        /* apply syntax highlighting (work in progress) */
-        highlight();
 
         /* put the cursor back where it should be (the drawing functions move the cursor) */
         b_cursesPositionCursor(g_cb->b, 0, 0);
